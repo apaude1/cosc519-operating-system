@@ -5,4 +5,5 @@ public class Main {
 		// TODO Auto-generated method stub
 		System.out.println("This is our CPU Scheduling project");
 	}
+
 }
