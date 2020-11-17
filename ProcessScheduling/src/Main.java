@@ -7,6 +7,7 @@ public class Main {
 		System.out.println("Start of First Come First Serve Scheduling Simulation");
 		FirstComeFirstServeScheduling firstComeFirstServeScheduling = new FirstComeFirstServeScheduling();
 		firstComeFirstServeScheduling.run();
+		firstComeFirstServeScheduling.displayAccountingInformation();
 		System.out.println("End of First Come First Serve Scheduling Simulation");
 		
 		//reset system timer
@@ -16,7 +17,18 @@ public class Main {
 		System.out.println("Start of Round Robin Scheduling Simulation");
 		RoundRobinScheduling roundRobinScheduling = new RoundRobinScheduling();
 		roundRobinScheduling.run();
+		roundRobinScheduling.displayAccountingInformation();
 		System.out.println("End of Round Robin Scheduling Simulation");		
+		
+		//reset system timer
+		Helper.currentTime = 0;
+		//reset process counter
+		Helper.processCounter = 1;
+		System.out.println("Start of Shortest Time Remaining First Scheduling Simulation");
+		ShortestRemainingTimeFirstScheduling shortestRemainingTimeFirstScheduling = new ShortestRemainingTimeFirstScheduling();
+		shortestRemainingTimeFirstScheduling.run();
+		shortestRemainingTimeFirstScheduling.displayAccountingInformation();
+		System.out.println("End of Shortest Time Remaining First Scheduling Simulation");		
 		
 		//reset system timer
 		Helper.currentTime = 0;
@@ -25,6 +37,7 @@ public class Main {
 		System.out.println("Start of Priority Scheduling Simulation");
 		PriorityScheduling priorityScheduling = new PriorityScheduling();
 		priorityScheduling.run();
+		priorityScheduling.displayAccountingInformation();
 		System.out.println("End of Priority Scheduling Simulation");	
 	}
 		/*// TODO Auto-generated method stub

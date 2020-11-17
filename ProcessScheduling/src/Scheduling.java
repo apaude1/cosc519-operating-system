@@ -7,11 +7,10 @@ public abstract class Scheduling {
 	protected ProcessControlTable processControlTable;
 	protected JobQueue jobQueue;
 	protected ReadyQueue readyQueue;
-	protected AlgorithmEnum algorithm;
 	Random random;
+	protected int startTime = 0;
 	
-	public Scheduling(AlgorithmEnum algorithm) {
-		this.algorithm = algorithm;
+	public Scheduling() {
 		this.processGenerator = new ProcessGenerator();
 		this.processControlTable = new ProcessControlTable();
 		this.jobQueue = new JobQueue();
@@ -23,13 +22,17 @@ public abstract class Scheduling {
 	
 	protected abstract void runDispatcher(ProcessControlBlock selectedProcess);
 	
+	protected void displayAccountingInformation() {
+		processControlTable.displayAccountingInformation();
+	}
+	
 	protected void run() {				
 		//simulate random arriving processes in the job queue
 		randomizeProcessArrivalInJobQueue();					
 		while(true) {			
 			//run job scheduler to populate ready queue
 			runJobScheduler();		
-			while(!readyQueue.isEmpty()) {
+			while(!readyQueue.isEmpty() || processControlTable.getRunningProcessControlBlock() != null) {
 				ProcessControlBlock processControlBlock = runCPUScheduler();				
 				runDispatcher(processControlBlock);		
 				//run job scheduler when ready queue falls below threshold
@@ -68,13 +71,16 @@ public abstract class Scheduling {
 		}		
 	}
 	
-	protected void updateAccountingInformation(ProcessControlBlock processControlBlock, int remainingBurstTime) {
+	protected void updateTurnAroundTimeAndCompletionTime(ProcessControlBlock processControlBlock) {
 		int turnAroundTime = Helper.currentTime - processControlBlock.getArrivalTime();
-		int waitTime = turnAroundTime - processControlBlock.getBurstTime();
-		processControlBlock.setRemainingBurstTime(remainingBurstTime);
 		processControlBlock.setCompletionTime(Helper.currentTime);
-		processControlBlock.setWaitTime(waitTime);
 		processControlBlock.setTurnAroundTime(turnAroundTime);
+	}
+	
+	protected void updateWaitTime(ProcessControlBlock processControlBlock) {
+		int waitTime = processControlBlock.getWaitTime();
+		waitTime += Helper.currentTime - startTime;
+		processControlBlock.setWaitTime(waitTime);
 	}
 	
 	protected void randomizeProcessArrivalInJobQueue() {		

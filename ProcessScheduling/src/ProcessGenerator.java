@@ -1,15 +1,19 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 public class ProcessGenerator {
 	
+	Random random;
+	
 	public ProcessGenerator() {		
+		random = new Random();
 	}
 	
 	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue) {
 		int capacity = jobQueue.getAvailableCapacity();
 		//simulate different arrival time by randomly choosing to run
-		int size = (int) (Math.random() * capacity);
+		int size = random.nextInt(capacity);
 		if (size > 0) {
 			ArrayList<ProcessControlBlock> processes = generate(size);		
 			//populate the job queue

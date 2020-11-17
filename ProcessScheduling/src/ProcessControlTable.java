@@ -1,12 +1,13 @@
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class ProcessControlTable {
 	
-	private Hashtable<Integer, ProcessControlBlock> processControlTable;
+	private LinkedHashMap<Integer, ProcessControlBlock> processControlTable;
 	
 	public ProcessControlTable() { 	      
-		processControlTable = new Hashtable<>();
+		processControlTable = new LinkedHashMap<Integer, ProcessControlBlock>();
     } 
 	
 	public void add(int pid, ProcessControlBlock processControlBlock) {
@@ -26,5 +27,26 @@ public class ProcessControlTable {
 			}
 		}
 		return null;
+	}
+	
+	public void displayAccountingInformation() {
+		System.out.println("Process ID | Arrival Time | Completion Time | Burst Time | Waiting Time | Turn Around Time"); 
+		Set<Integer> keys = processControlTable.keySet();
+		int totalWaitTime = 0;
+		int totalTurnAroundTime = 0;
+		for(Integer key: keys) {
+			ProcessControlBlock processControlBlock = processControlTable.get(key);			
+			totalWaitTime = totalWaitTime + processControlBlock.getWaitTime(); 
+			totalTurnAroundTime = totalTurnAroundTime + processControlBlock.getTurnAroundTime(); 
+	        System.out.println(" " + processControlBlock.getPID() 
+	        	+ "\t\t" + processControlBlock.getArrivalTime()
+	        	+ "\t\t" + processControlBlock.getCompletionTime()
+	        	+ "\t\t" + processControlBlock.getBurstTime() 
+	        	+ "\t\t" + processControlBlock.getWaitTime() 
+	            + "\t\t" + processControlBlock.getTurnAroundTime()); 
+		}
+		
+	    System.out.println("Average waiting time = " + (float)totalWaitTime / (float)keys.size()); 
+	    System.out.println("Average turn around time = " + (float)totalTurnAroundTime / (float)keys.size()); 
 	}
 }

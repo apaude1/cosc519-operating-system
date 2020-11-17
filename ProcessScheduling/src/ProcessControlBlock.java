@@ -4,7 +4,6 @@ public class ProcessControlBlock {
 	private int arrivalTime;
 	private int burstTime;
 	private int remainingBurstTime;
-	private int remainingQuantumTime;
 	private int waitTime;
 	private int completionTime;
 	private int turnAroundTime;
@@ -45,11 +44,7 @@ public class ProcessControlBlock {
 	public void setRemainingBurstTime(int remainingBurstTime) { //set remaining burst time of the process
 		this.remainingBurstTime = remainingBurstTime;
 	}
-	
-	public int getRemainingQuantumTime() { //get remaining quantum time of the process
-		return remainingQuantumTime;
-	}
-	
+		
 	public int getWaitTime() { //get wait time of the process
 		return waitTime; 
 	}
