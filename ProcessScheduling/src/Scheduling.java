@@ -7,10 +7,10 @@ public abstract class Scheduling {
 	protected ProcessControlTable processControlTable;
 	protected JobQueue jobQueue;
 	protected ReadyQueue readyQueue;
-	protected Algorithm algorithm;
+	protected AlgorithmEnum algorithm;
 	Random random;
 	
-	public Scheduling(Algorithm algorithm) {
+	public Scheduling(AlgorithmEnum algorithm) {
 		this.algorithm = algorithm;
 		this.processGenerator = new ProcessGenerator();
 		this.processControlTable = new ProcessControlTable();

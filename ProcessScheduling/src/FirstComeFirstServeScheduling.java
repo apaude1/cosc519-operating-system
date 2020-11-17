@@ -2,7 +2,7 @@
 public class FirstComeFirstServeScheduling extends Scheduling {	
 	
 	public FirstComeFirstServeScheduling() {
-		super(Algorithm.FCFS);
+		super(AlgorithmEnum.FCFS);
 	}		
 	
 	@Override
@@ -21,7 +21,7 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 		//get the selected process info from the process control block
 		ProcessControlBlock processControlBlock = processControlTable.getProcessControlBlockByProcessId(selectedProcess.getPID());
 		//set the state of the selected process to running
-		processControlBlock.setProcessState(ProcessState.RUNNING);	
+		processControlBlock.setProcessState(ProcessStateEnum.RUNNING);	
 		System.out.println("pid: " + processControlBlock.getPID() + "; start time: " + Helper.currentTime+ "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime());
 			
 		//processControlBlock.setProgramCounter();			
@@ -31,7 +31,7 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 		updateAccountingInformation(processControlBlock, remainingBurstTime);
 		
 		//set the state of the process to terminated
-		processControlBlock.setProcessState(ProcessState.TERMINATED);
+		processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);
 		System.out.println("pid: " + processControlBlock.getPID() + "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime() + " finished at time: " + Helper.currentTime);
 		Helper.currentTime++;
 	}

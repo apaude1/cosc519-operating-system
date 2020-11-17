@@ -1,5 +1,4 @@
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 
 public class ProcessControlTable {
@@ -22,7 +21,7 @@ public class ProcessControlTable {
 		Set<Integer> keys = processControlTable.keySet();
 		for(Integer key: keys) {
 			ProcessControlBlock processControlBlock = processControlTable.get(key);
-			if (processControlBlock.getProcessState() == ProcessState.RUNNING) {
+			if (processControlBlock.getProcessState() == ProcessStateEnum.RUNNING) {
 				return processControlBlock;				
 			}
 		}

@@ -1,5 +1,5 @@
 
-public enum ProcessState {
+public enum ProcessStateEnum {
 	NEW,
 	READY,
 	RUNNING,

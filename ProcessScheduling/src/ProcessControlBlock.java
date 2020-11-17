@@ -9,10 +9,10 @@ public class ProcessControlBlock {
 	private int completionTime;
 	private int turnAroundTime;
 	private int priority;
-	private ProcessState processState; //NEW, READY, RUNNING, TERMINATED
+	private ProcessStateEnum processState; //NEW, READY, RUNNING, TERMINATED
 	private int programCounter;	
 	
-	public ProcessControlBlock(int pid, ProcessState processState, int programCounter) {
+	public ProcessControlBlock(int pid, ProcessStateEnum processState, int programCounter) {
 		this.pid = pid;		
 		this.processState = processState;
 		this.programCounter = programCounter;
@@ -82,11 +82,11 @@ public class ProcessControlBlock {
 		this.priority = priority; 
 	}
 	
-	public ProcessState getProcessState() { //get state of the process
+	public ProcessStateEnum getProcessState() { //get state of the process
 		return processState;
 	}
 	
-	public void setProcessState(ProcessState processState) { //set state of the process
+	public void setProcessState(ProcessStateEnum processState) { //set state of the process
 		this.processState = processState;
 	}
 	

@@ -27,7 +27,7 @@ public class ProcessGenerator {
 			if (Helper.processCounter > Helper.MAX_PROCESS) {
 				break;
 			}
-			processes.add(new ProcessControlBlock(Helper.processCounter, ProcessState.NEW, 1));
+			processes.add(new ProcessControlBlock(Helper.processCounter, ProcessStateEnum.NEW, 1));
 			Helper.processCounter++;			
 		}
 		return processes;

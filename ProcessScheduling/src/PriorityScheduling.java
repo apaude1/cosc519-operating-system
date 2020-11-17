@@ -3,7 +3,7 @@ import java.util.Iterator;
 public class PriorityScheduling extends Scheduling {	
 	
 	public PriorityScheduling() {
-		super(Algorithm.PS);
+		super(AlgorithmEnum.PS);
 	}
 		
 	@Override
@@ -25,7 +25,7 @@ public class PriorityScheduling extends Scheduling {
 		ProcessControlBlock processControlBlock = null;
 		if (currentRunningProcess != null && selectedProcess != null) {					
 			//set the state of the process
-			currentRunningProcess.setProcessState(ProcessState.READY);
+			currentRunningProcess.setProcessState(ProcessStateEnum.READY);
 			//put it back to the ready queue
 			readyQueue.enqueue(currentRunningProcess);				
 			System.out.println("Context switched pid: " + currentRunningProcess.getPID() + "; arrival time: " + currentRunningProcess.getArrivalTime() + "; priority: " + currentRunningProcess.getPriority() + "; burst time: " + currentRunningProcess.getBurstTime() + " partially finished at time: " + (Helper.currentTime - 1) + " with remaining burst time: " + currentRunningProcess.getRemainingBurstTime());
@@ -34,7 +34,7 @@ public class PriorityScheduling extends Scheduling {
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
-			processControlBlock.setProcessState(ProcessState.RUNNING);	
+			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);	
 			System.out.println("pid: " + processControlBlock.getPID() + "; start time: " + Helper.currentTime + "; arrival time: " + processControlBlock.getArrivalTime() + "; priority: " + processControlBlock.getPriority() + "; burst time: " + processControlBlock.getBurstTime() + " remaining burst time: " + processControlBlock.getRemainingBurstTime());
 		}
 		else if (currentRunningProcess != null && selectedProcess == null) {
@@ -45,7 +45,7 @@ public class PriorityScheduling extends Scheduling {
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
-			processControlBlock.setProcessState(ProcessState.RUNNING);	
+			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);	
 			System.out.println("pid: " + processControlBlock.getPID() + "; start time: " + Helper.currentTime + "; arrival time: " + processControlBlock.getArrivalTime() + "; priority: " + processControlBlock.getPriority() + "; burst time: " + processControlBlock.getBurstTime() + " remaining burst time: " + processControlBlock.getRemainingBurstTime());
 		}
 		//processControlBlock.setProgramCounter();			
@@ -56,7 +56,7 @@ public class PriorityScheduling extends Scheduling {
 			updateAccountingInformation(processControlBlock, remainingBurstTime);
 			System.out.println("pid: " + processControlBlock.getPID()+ "; finished at time: " + Helper.currentTime + "; arrival time: " + processControlBlock.getArrivalTime() + "; priority: " + processControlBlock.getPriority() + "; burst time: " + processControlBlock.getBurstTime());										
 			//set the state of the process to terminated
-			processControlBlock.setProcessState(ProcessState.TERMINATED);
+			processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);
 		}
 		Helper.currentTime++;
 	}
