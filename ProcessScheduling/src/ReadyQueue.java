@@ -1,11 +1,21 @@
-import java.util.*;
-
 // Implement Ready Queue using Priority Queue
-public class ReadyQueue implements IReadyQueue {
+public class ReadyQueue extends ProcessQueue {
+			
+	public ReadyQueue() {
+		super();
+	}
+		
+	@Override
+	public int getAvailableCapacity() {
+		return Helper.READY_QUEUE_CAPACITY - processQueue.size();
+	}
 	
-	PriorityQueue<Process> _readyQueue;
-	
-	public ReadyQueue(int size, ProcessArrivalTimeComparator processArrivalTimeComparator) {
-		_readyQueue = new PriorityQueue<Process>(size, processArrivalTimeComparator);		
-	}	
+	@Override
+	public boolean isBelowThresholdCapacity() {
+		double percentageAvailableCapacity = processQueue.size() / (float)Helper.READY_QUEUE_CAPACITY;
+		if (percentageAvailableCapacity < Helper.THRESHOLD_CAPACITY)
+			return true; 
+		else
+			return false;
+	}
 }

@@ -2,7 +2,33 @@ import java.util.List;
 
 public class Main {
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		//reset system timer
+		Helper.currentTime = 0;
+		Helper.processCounter = 1;
+		System.out.println("Start of First Come First Serve Scheduling Simulation");
+		FirstComeFirstServeScheduling firstComeFirstServeScheduling = new FirstComeFirstServeScheduling();
+		firstComeFirstServeScheduling.run();
+		System.out.println("End of First Come First Serve Scheduling Simulation");
+		
+		//reset system timer
+		Helper.currentTime = 0;
+		//reset process counter
+		Helper.processCounter = 1;
+		System.out.println("Start of Round Robin Scheduling Simulation");
+		RoundRobinScheduling roundRobinScheduling = new RoundRobinScheduling();
+		roundRobinScheduling.run();
+		System.out.println("End of Round Robin Scheduling Simulation");		
+		
+		//reset system timer
+		Helper.currentTime = 0;
+		//reset process counter
+		Helper.processCounter = 1;
+		System.out.println("Start of Priority Scheduling Simulation");
+		PriorityScheduling priorityScheduling = new PriorityScheduling();
+		priorityScheduling.run();
+		System.out.println("End of Priority Scheduling Simulation");	
+	}
+		/*// TODO Auto-generated method stub
 		//System.out.println("This is our CPU Scheduling project");
 		 long id = getPID();
 		 int pid = (int) id;
@@ -76,5 +102,5 @@ public class Main {
             }
 
             return 0;
-        }
+        }*/
 }
