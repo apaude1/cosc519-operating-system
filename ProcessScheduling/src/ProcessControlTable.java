@@ -1,4 +1,3 @@
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -36,8 +35,8 @@ public class ProcessControlTable {
 		int totalTurnAroundTime = 0;
 		for(Integer key: keys) {
 			ProcessControlBlock processControlBlock = processControlTable.get(key);			
-			totalWaitTime = totalWaitTime + processControlBlock.getWaitTime(); 
-			totalTurnAroundTime = totalTurnAroundTime + processControlBlock.getTurnAroundTime(); 
+			totalWaitTime += processControlBlock.getWaitTime(); 
+			totalTurnAroundTime += processControlBlock.getTurnAroundTime(); 
 	        System.out.println(" " + processControlBlock.getPID() 
 	        	+ "\t\t" + processControlBlock.getArrivalTime()
 	        	+ "\t\t" + processControlBlock.getCompletionTime()

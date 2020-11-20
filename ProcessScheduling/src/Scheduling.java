@@ -7,6 +7,7 @@ public abstract class Scheduling {
 	protected ProcessControlTable processControlTable;
 	protected JobQueue jobQueue;
 	protected ReadyQueue readyQueue;
+	protected GanttChartQueue ganttChartQueue;
 	Random random;
 	protected int startTime = 0;
 	
@@ -15,6 +16,7 @@ public abstract class Scheduling {
 		this.processControlTable = new ProcessControlTable();
 		this.jobQueue = new JobQueue();
 		this.readyQueue = new ReadyQueue();	
+		this.ganttChartQueue = new GanttChartQueue();
 		random = new Random();
 	}	
 	
@@ -23,7 +25,70 @@ public abstract class Scheduling {
 	protected abstract void runDispatcher(ProcessControlBlock selectedProcess);
 	
 	protected void displayAccountingInformation() {
+		System.out.println("******************************");
 		processControlTable.displayAccountingInformation();
+	}
+	
+	protected void displayCurrentEvent() {
+		System.out.println("******************************");
+		ProcessControlBlock runningProcessControlBlock = processControlTable.getRunningProcessControlBlock();
+		System.out.println("Current Time: " + Helper.currentTime);		
+		if (runningProcessControlBlock != null) {			
+			System.out.println("Executing Process: P" + runningProcessControlBlock.getPID() + "; Remaining Burst Time: " + runningProcessControlBlock.getRemainingBurstTime() + "; Priority: " + runningProcessControlBlock.getPriority());
+		}
+		else {
+			System.out.println("Executing Process: Idle");
+		}
+	}
+	
+	protected void displayGanttChartQueue() {
+		Iterator<ProcessControlBlock> iterator = ganttChartQueue.getIterator();		
+		int previousProcessBurstEndTime = 0;
+		System.out.print("Gantt Chart: ");
+		while (iterator.hasNext()) {
+			ProcessControlBlock processControlBlock = iterator.next();
+			int burstStartTime = processControlBlock.getBurstStartTime();			
+			if (previousProcessBurstEndTime == burstStartTime) {
+				System.out.print("|" + previousProcessBurstEndTime + "    P" + processControlBlock.getPID() + "    " + processControlBlock.getBurstEndTime());					
+			}
+			else {
+				System.out.print("|" + previousProcessBurstEndTime + "  Idle  " + (processControlBlock.getBurstStartTime() - 1) + "|" + processControlBlock.getBurstStartTime() + "    P" + processControlBlock.getPID() + "    " + processControlBlock.getBurstEndTime());
+			}
+			previousProcessBurstEndTime = processControlBlock.getBurstEndTime() + 1;
+	    }
+		System.out.print("|");
+		System.out.println();
+	}
+	
+	protected void displayReadyQueue() {				
+		Iterator<ProcessControlBlock> iterator = readyQueue.getIterator();
+		int i = 0;
+		if (iterator.hasNext()) {
+			while (iterator.hasNext()) {
+				ProcessControlBlock processControlBlock = iterator.next();
+				if (i == 0) {
+					System.out.print("Ready Queue: |  P" + processControlBlock.getPID());
+				}	
+				else {
+					System.out.print("  |  P" + processControlBlock.getPID());
+				}
+		        i++;
+		    }
+			System.out.println("  |");
+		}
+		else {
+			System.out.println("Ready Queue: Empty");
+		}
+	}
+	
+	protected void randomizeProcessArrivalInJobQueue() {		
+		processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);
+		//populate the process control table with all the incoming jobs
+		Iterator<ProcessControlBlock> iterator = jobQueue.getIterator();           
+	    while (iterator.hasNext()) { 
+	    	ProcessControlBlock processControlBlock = iterator.next();        	
+	        processControlTable.add(processControlBlock.getPID(), processControlBlock);
+	    }         					
 	}
 	
 	protected void run() {				
@@ -32,27 +97,32 @@ public abstract class Scheduling {
 		while(true) {			
 			//run job scheduler to populate ready queue
 			runJobScheduler();		
-			while(!readyQueue.isEmpty() || processControlTable.getRunningProcessControlBlock() != null) {
-				ProcessControlBlock processControlBlock = runCPUScheduler();				
-				runDispatcher(processControlBlock);		
+			while(!readyQueue.isEmpty() || processControlTable.getRunningProcessControlBlock() != null) {				
+				ProcessControlBlock processControlBlock = runCPUScheduler();
+				runDispatcher(processControlBlock);
 				//run job scheduler when ready queue falls below threshold
 				if (readyQueue.isBelowThresholdCapacity()) {
 					runJobScheduler();
 				}
 			}
 			
+			displayCurrentEvent();
+			displayReadyQueue();
+			displayGanttChartQueue();
+			
 			if (Helper.processCounter > Helper.MAX_PROCESS) {
 				break;
 			}
-			
-			//CPU idle					
-			System.out.println("CPU is idle at time: " + Helper.currentTime);
 			Helper.currentTime++;
 			
 			//simulate random arrival of processes
 			//this would add new processes with a new arrival time when job scheduler runs
 			randomizeProcessArrivalInJobQueue();	
 		}
+		System.out.println("******************************");
+		System.out.print("Final Gantt Chart: ");
+		displayGanttChartQueue();		
+		displayAccountingInformation();
 	}	
 	
 	protected void runJobScheduler() {
@@ -71,25 +141,17 @@ public abstract class Scheduling {
 		}		
 	}
 	
+	//turn around time is the total amount of time spent by the process from coming in the ready state for the first time to its completion
 	protected void updateTurnAroundTimeAndCompletionTime(ProcessControlBlock processControlBlock) {
-		int turnAroundTime = Helper.currentTime - processControlBlock.getArrivalTime();
-		processControlBlock.setCompletionTime(Helper.currentTime);
+		int turnAroundTime = processControlBlock.getBurstTime() + processControlBlock.getWaitTime();
 		processControlBlock.setTurnAroundTime(turnAroundTime);
-	}
+		processControlBlock.setCompletionTime(Helper.currentTime);		
+	}	
 	
-	protected void updateWaitTime(ProcessControlBlock processControlBlock) {
+	//waiting time is the total time taken by the process in the ready queue
+	protected void updateWaitTime(ProcessControlBlock processControlBlock) {		
 		int waitTime = processControlBlock.getWaitTime();
-		waitTime += Helper.currentTime - startTime;
+		waitTime += processControlBlock.getBurstStartTime() - processControlBlock.getBurstEndTime();
 		processControlBlock.setWaitTime(waitTime);
-	}
-	
-	protected void randomizeProcessArrivalInJobQueue() {		
-		processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);
-		//populate the process control table with all the incoming jobs
-		Iterator<ProcessControlBlock> iterator = jobQueue.getIterator();           
-	    while (iterator.hasNext()) { 
-	    	ProcessControlBlock processControlBlock = iterator.next();        	
-	        processControlTable.add(processControlBlock.getPID(), processControlBlock);
-	    }         					
-	}
+	}	
 }

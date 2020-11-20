@@ -1,4 +1,4 @@
-// Implement Ready Queue using Priority Queue
+// Implement Job Queue using Linked List
 public class ReadyQueue extends ProcessQueue {
 			
 	public ReadyQueue() {

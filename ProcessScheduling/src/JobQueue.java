@@ -1,5 +1,4 @@
-
-// Implement Job Queue using Priority Queue
+// Implement Job Queue using Linked List
 public class JobQueue extends ProcessQueue {
 				
 	public JobQueue() {

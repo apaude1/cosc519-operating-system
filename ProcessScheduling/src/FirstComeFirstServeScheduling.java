@@ -15,27 +15,33 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 	}
 	
 	@Override
-	protected void runDispatcher(ProcessControlBlock scheduledProcess) {	
+	protected void runDispatcher(ProcessControlBlock scheduledProcess) {		
 		//start executing the scheduled process
 		startTime = Helper.currentTime;
+		scheduledProcess.setBurstStartTime(startTime);		
 		//remove the selected process from the ready queue
 		readyQueue.remove(scheduledProcess);
 		ProcessControlBlock processControlBlock = scheduledProcess;
 		//set the state of the selected process to running
-		processControlBlock.setProcessState(ProcessStateEnum.RUNNING);	
-		System.out.println("pid: " + processControlBlock.getPID() + "; start time: " + Helper.currentTime+ "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime());
+		processControlBlock.setProcessState(ProcessStateEnum.RUNNING);
+		displayCurrentEvent();
+		displayReadyQueue();		
+		displayGanttChartQueue();
 			
 		//processControlBlock.setProgramCounter();			
 		int remainingBurstTime = processControlBlock.getRemainingBurstTime();					
 		Helper.currentTime += remainingBurstTime - 1;
 		remainingBurstTime = 0;
 		processControlBlock.setRemainingBurstTime(remainingBurstTime);	
-		updateWaitTime(processControlBlock);
-		updateTurnAroundTimeAndCompletionTime(processControlBlock);
+		processControlBlock.setBurstEndTime(Helper.currentTime);
+		processControlBlock.setCompletionTime(Helper.currentTime);
+		processControlBlock.setTurnAroundTime(Helper.currentTime - processControlBlock.getArrivalTime() + 1);
+		processControlBlock.setWaitTime(processControlBlock.getTurnAroundTime() - processControlBlock.getBurstTime());
+		ganttChartQueue.enqueue(processControlBlock);
+		
 		
 		//set the state of the process to terminated
 		processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);
-		System.out.println("pid: " + processControlBlock.getPID() + "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime() + " finished at time: " + Helper.currentTime);
 		Helper.currentTime++;
 	}
 }

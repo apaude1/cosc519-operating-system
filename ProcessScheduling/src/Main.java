@@ -27,7 +27,6 @@ public class Main {
 		System.out.println("Start of Shortest Time Remaining First Scheduling Simulation");
 		ShortestRemainingTimeFirstScheduling shortestRemainingTimeFirstScheduling = new ShortestRemainingTimeFirstScheduling();
 		shortestRemainingTimeFirstScheduling.run();
-		shortestRemainingTimeFirstScheduling.displayAccountingInformation();
 		System.out.println("End of Shortest Time Remaining First Scheduling Simulation");		
 		
 		//reset system timer

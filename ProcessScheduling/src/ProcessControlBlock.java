@@ -4,6 +4,8 @@ public class ProcessControlBlock {
 	private int arrivalTime;
 	private int burstTime;
 	private int remainingBurstTime;
+	private int burstStartTime;
+	private int burstEndTime;
 	private int waitTime;
 	private int completionTime;
 	private int turnAroundTime;
@@ -35,6 +37,22 @@ public class ProcessControlBlock {
 	
 	public void setBurstTime(int burstTime) { //set burst time of the process
 		this.burstTime = burstTime;
+	}
+	
+	public int getBurstStartTime() { //get burst start time of the process
+		return burstStartTime; 
+	}
+	
+	public void setBurstStartTime(int burstStartTime) { //set burst start time of the process
+		this.burstStartTime = burstStartTime;
+	}
+	
+	public int getBurstEndTime() { //get burst end time of the process
+		return burstEndTime; 
+	}
+	
+	public void setBurstEndTime(int burstEndTime) { //set burst end time of the process
+		this.burstEndTime = burstEndTime;
 	}
 	
 	public int getRemainingBurstTime() { //get remaining burst time of the process
