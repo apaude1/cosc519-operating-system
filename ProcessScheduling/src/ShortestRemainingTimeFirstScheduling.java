@@ -21,21 +21,24 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 		ProcessControlBlock currentRunningProcess = processControlTable.getRunningProcessControlBlock();
 		ProcessControlBlock processControlBlock = null;		
 		if (currentRunningProcess != null && scheduledProcess != null) {	
-			updateWaitTime(currentRunningProcess);
 			//set the state of the process
-			currentRunningProcess.setProcessState(ProcessStateEnum.READY);			
+			currentRunningProcess.setProcessState(ProcessStateEnum.READY);		
+			currentRunningProcess.setBurstEndTime(Helper.currentTime);
+			ganttChartQueue.enqueue(currentRunningProcess);
 			//put it back to the ready queue
-			readyQueue.enqueue(currentRunningProcess);				
-			System.out.println("Context switched pid: " + currentRunningProcess.getPID() + "; arrival time: " + currentRunningProcess.getArrivalTime() + "; burst time: " + currentRunningProcess.getBurstTime() + " partially finished at time: " + (Helper.currentTime - 1) + " with remaining burst time: " + currentRunningProcess.getRemainingBurstTime());
+			readyQueue.enqueue(currentRunningProcess);
 				
 			//start executing the scheduled process
 			startTime = Helper.currentTime;
+			scheduledProcess.setBurstStartTime(startTime);	
 			processControlBlock = scheduledProcess;
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
 			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);
-			System.out.println("pid: " + processControlBlock.getPID() + "; start time: " + Helper.currentTime + "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime() + " remaining burst time: " + processControlBlock.getRemainingBurstTime());
+			displayCurrentEvent();
+			displayReadyQueue();		
+			displayGanttChartQueue();
 		}
 		else if (currentRunningProcess != null && scheduledProcess == null) {
 			//continue executing the current process
@@ -44,24 +47,29 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 		else if (currentRunningProcess == null && scheduledProcess != null) {
 			//start executing the scheduled process
 			startTime = Helper.currentTime;
+			scheduledProcess.setBurstStartTime(startTime);	
 			processControlBlock = scheduledProcess;
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
 			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);			
-			System.out.println("pid: " + processControlBlock.getPID() + "; start time: " + Helper.currentTime + "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime() + " remaining burst time: " + processControlBlock.getRemainingBurstTime());
+			displayCurrentEvent();
+			displayReadyQueue();		
+			displayGanttChartQueue();
 		}
 		//processControlBlock.setProgramCounter();			
 		int remainingBurstTime = processControlBlock.getRemainingBurstTime();					
-		remainingBurstTime--;			
-		processControlBlock.setRemainingBurstTime(remainingBurstTime);				
-		if (remainingBurstTime == 0) {
-			updateWaitTime(processControlBlock);
-			updateTurnAroundTimeAndCompletionTime(processControlBlock);
-			System.out.println("pid: " + processControlBlock.getPID()+ "; finished at time: " + Helper.currentTime + "; arrival time: " + processControlBlock.getArrivalTime() + "; burst time: " + processControlBlock.getBurstTime());										
+		remainingBurstTime--;
+		if (remainingBurstTime == 0) {			
+			processControlBlock.setCompletionTime(Helper.currentTime);
+			processControlBlock.setTurnAroundTime(Helper.currentTime - processControlBlock.getArrivalTime() + 1);
+			processControlBlock.setWaitTime(processControlBlock.getTurnAroundTime() - processControlBlock.getBurstTime());
+			processControlBlock.setBurstEndTime(Helper.currentTime);
 			//set the state of the process to terminated
 			processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);
+			ganttChartQueue.enqueue(processControlBlock);
 		}
+		processControlBlock.setRemainingBurstTime(remainingBurstTime);	
 		Helper.currentTime++;
 	}
 		

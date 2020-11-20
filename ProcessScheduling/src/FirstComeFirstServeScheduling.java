@@ -15,9 +15,9 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 	}
 	
 	@Override
-	protected void runDispatcher(ProcessControlBlock scheduledProcess) {		
-		//start executing the scheduled process
-		startTime = Helper.currentTime;
+	protected void runDispatcher(ProcessControlBlock scheduledProcess) {	
+		//start executing the scheduled process		
+		startTime = Helper.currentTime;		
 		scheduledProcess.setBurstStartTime(startTime);		
 		//remove the selected process from the ready queue
 		readyQueue.remove(scheduledProcess);
@@ -37,8 +37,7 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 		processControlBlock.setCompletionTime(Helper.currentTime);
 		processControlBlock.setTurnAroundTime(Helper.currentTime - processControlBlock.getArrivalTime() + 1);
 		processControlBlock.setWaitTime(processControlBlock.getTurnAroundTime() - processControlBlock.getBurstTime());
-		ganttChartQueue.enqueue(processControlBlock);
-		
+		ganttChartQueue.enqueue(processControlBlock);		
 		
 		//set the state of the process to terminated
 		processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);

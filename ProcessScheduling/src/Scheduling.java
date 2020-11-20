@@ -24,7 +24,7 @@ public abstract class Scheduling {
 	
 	protected abstract void runDispatcher(ProcessControlBlock selectedProcess);
 	
-	protected void displayAccountingInformation() {
+	private void displayAccountingInformation() {
 		System.out.println("******************************");
 		processControlTable.displayAccountingInformation();
 	}
@@ -126,6 +126,9 @@ public abstract class Scheduling {
 	}	
 	
 	protected void runJobScheduler() {
+		System.out.println("******************************");		
+		System.out.println("Current Time: " + Helper.currentTime);	
+		System.out.println("Running Job Scheduler");
 		int availableCapacity = readyQueue.getAvailableCapacity();				
 		while (availableCapacity > 0 && !jobQueue.isEmpty()) {
 			ProcessControlBlock processControlBlock = jobQueue.dequeue();
