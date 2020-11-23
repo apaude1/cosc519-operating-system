@@ -1,22 +1,18 @@
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class ProcessQueue {	
 		
-	protected LinkedList<ProcessControlBlock> processQueue;	 
-	
-	public ProcessQueue() {		
-		this.processQueue = new LinkedList<ProcessControlBlock>();
+	protected Queue<ProcessControlBlock> processQueue;	 
+		
+	public ProcessQueue(Queue<ProcessControlBlock> processQueue) {		
+		this.processQueue = processQueue;
 	}
-	
+		
 	protected abstract int getAvailableCapacity();
 	
 	public abstract boolean isBelowThresholdCapacity();
-	
-	public Iterator<ProcessControlBlock> getIterator() {
-		return processQueue.iterator();
-	}
-	
+		
 	public int getSize() {
 		return processQueue.size();
 	}	
@@ -39,5 +35,9 @@ public abstract class ProcessQueue {
 	
 	public boolean isEmpty() {
 		return processQueue.isEmpty();
+	}
+	
+	public Iterator<ProcessControlBlock> getIterator() {
+		return processQueue.iterator();
 	}
 }

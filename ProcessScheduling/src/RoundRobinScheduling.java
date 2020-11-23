@@ -1,8 +1,9 @@
+import java.util.LinkedList;
 
 public class RoundRobinScheduling extends Scheduling {	
-	
+		
 	public RoundRobinScheduling() {
-		super();
+		super(new ReadyQueue(new LinkedList<ProcessControlBlock>()));
 	}		
 		
 	@Override
@@ -21,48 +22,37 @@ public class RoundRobinScheduling extends Scheduling {
 		ProcessControlBlock processControlBlock = null;
 		if (currentRunningProcess != null && scheduledProcess != null) {
 			//set the state of the process
-			currentRunningProcess.setProcessState(ProcessStateEnum.READY);
-			currentRunningProcess.setBurstEndTime(Helper.currentTime);
-			ganttChartQueue.enqueue(currentRunningProcess);
+			currentRunningProcess.setProcessState(ProcessStateEnum.READY);			
 			//put it back to the ready queue
 			readyQueue.enqueue(currentRunningProcess);				
 			//context switched
 				
-			//start executing the scheduled process
-			startTime = Helper.currentTime;
-			scheduledProcess.setBurstStartTime(startTime);	
 			processControlBlock = scheduledProcess;
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
 			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);	
 			displayCurrentEvent();
-			displayReadyQueue();		
-			displayGanttChartQueue();
+			readyQueue.displayReadyQueue();		
+			ganttChartQueue.displayGanttChartQueue();
 		}
-		else if (currentRunningProcess != null && scheduledProcess == null) {
-			//continue executing the current process
-			processControlBlock = currentRunningProcess;
-		}
-		else if (currentRunningProcess == null && scheduledProcess != null) {
-			//start executing the scheduled process
-			startTime = Helper.currentTime;
-			scheduledProcess.setBurstStartTime(startTime);	
+		else if (currentRunningProcess == null && scheduledProcess != null) {			
 			processControlBlock = scheduledProcess;
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
 			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);	
 			displayCurrentEvent();
-			displayReadyQueue();		
-			displayGanttChartQueue();
+			readyQueue.displayReadyQueue();		
+			ganttChartQueue.displayGanttChartQueue();
 		}
 		
-		//processControlBlock.setProgramCounter();	
+		//start executing the scheduled process
+		scheduledProcess.setBurstStartTime(Helper.currentTime);
 		int remainingBurstTime = processControlBlock.getRemainingBurstTime();
 		if (remainingBurstTime > Helper.QUANTUM) {
 			Helper.currentTime += Helper.QUANTUM - 1;
-			remainingBurstTime -= Helper.QUANTUM;
+			remainingBurstTime -= Helper.QUANTUM;			
 		} 
 		else {
 			Helper.currentTime += remainingBurstTime - 1;
@@ -70,12 +60,12 @@ public class RoundRobinScheduling extends Scheduling {
 			processControlBlock.setCompletionTime(Helper.currentTime);
 			processControlBlock.setTurnAroundTime(Helper.currentTime - processControlBlock.getArrivalTime() + 1);
 			processControlBlock.setWaitTime(processControlBlock.getTurnAroundTime() - processControlBlock.getBurstTime());
-			processControlBlock.setBurstEndTime(Helper.currentTime);
 			//set the state of the process to terminated
-			processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);							
-			ganttChartQueue.enqueue(processControlBlock);
+			processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);	
 		}
 		processControlBlock.setRemainingBurstTime(remainingBurstTime);
+		processControlBlock.setBurstEndTime(Helper.currentTime);
+		ganttChartQueue.enqueue(new ProcessControlBlock(processControlBlock.getPID(), processControlBlock.getBurstStartTime(), processControlBlock.getBurstEndTime()));
 		Helper.currentTime++;
 	}
 }

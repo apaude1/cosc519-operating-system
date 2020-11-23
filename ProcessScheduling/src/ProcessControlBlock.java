@@ -19,6 +19,12 @@ public class ProcessControlBlock {
 		this.programCounter = programCounter;
 	}
 	
+	public ProcessControlBlock(int pid, int burstStartTime, int burstEndTime) {
+		this.pid = pid;		
+		this.burstStartTime = burstStartTime;
+		this.burstEndTime = burstEndTime;
+	}
+	
 	public int getPID() { //get process id of the process
 		return pid; 
 	}

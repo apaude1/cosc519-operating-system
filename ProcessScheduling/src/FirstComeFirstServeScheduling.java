@@ -1,8 +1,9 @@
+import java.util.PriorityQueue;
 
 public class FirstComeFirstServeScheduling extends Scheduling {	
 	
 	public FirstComeFirstServeScheduling() {
-		super();
+		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeComparator())));
 	}		
 	
 	@Override
@@ -16,17 +17,16 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 	
 	@Override
 	protected void runDispatcher(ProcessControlBlock scheduledProcess) {	
-		//start executing the scheduled process		
-		startTime = Helper.currentTime;		
-		scheduledProcess.setBurstStartTime(startTime);		
+		//start executing the scheduled process
+		scheduledProcess.setBurstStartTime(Helper.currentTime);		
 		//remove the selected process from the ready queue
 		readyQueue.remove(scheduledProcess);
 		ProcessControlBlock processControlBlock = scheduledProcess;
 		//set the state of the selected process to running
 		processControlBlock.setProcessState(ProcessStateEnum.RUNNING);
 		displayCurrentEvent();
-		displayReadyQueue();		
-		displayGanttChartQueue();
+		readyQueue.displayReadyQueue();		
+		ganttChartQueue.displayGanttChartQueue();
 			
 		//processControlBlock.setProgramCounter();			
 		int remainingBurstTime = processControlBlock.getRemainingBurstTime();					

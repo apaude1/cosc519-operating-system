@@ -1,9 +1,9 @@
-import java.util.Iterator;
+import java.util.PriorityQueue;
 
 public class ShortestRemainingTimeFirstScheduling extends Scheduling {	
 		
-	public ShortestRemainingTimeFirstScheduling() {
-		super();
+	public ShortestRemainingTimeFirstScheduling() {		
+		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeRemainingBurstTimeComparator())));
 	}
 		
 	@Override
@@ -22,42 +22,39 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 		ProcessControlBlock processControlBlock = null;		
 		if (currentRunningProcess != null && scheduledProcess != null) {	
 			//set the state of the process
-			currentRunningProcess.setProcessState(ProcessStateEnum.READY);		
-			currentRunningProcess.setBurstEndTime(Helper.currentTime);
-			ganttChartQueue.enqueue(currentRunningProcess);
+			currentRunningProcess.setProcessState(ProcessStateEnum.READY);
 			//put it back to the ready queue
 			readyQueue.enqueue(currentRunningProcess);
+			//context switched
 				
 			//start executing the scheduled process
-			startTime = Helper.currentTime;
-			scheduledProcess.setBurstStartTime(startTime);	
+			scheduledProcess.setBurstStartTime(Helper.currentTime);	
 			processControlBlock = scheduledProcess;
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
 			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);
 			displayCurrentEvent();
-			displayReadyQueue();		
-			displayGanttChartQueue();
+			readyQueue.displayReadyQueue();		
+			ganttChartQueue.displayGanttChartQueue();
 		}
 		else if (currentRunningProcess != null && scheduledProcess == null) {
 			//continue executing the current process
 			processControlBlock = currentRunningProcess;
 		}
 		else if (currentRunningProcess == null && scheduledProcess != null) {
-			//start executing the scheduled process
-			startTime = Helper.currentTime;
-			scheduledProcess.setBurstStartTime(startTime);	
+			//start executing the scheduled process			
+			scheduledProcess.setBurstStartTime(Helper.currentTime);	
 			processControlBlock = scheduledProcess;
 			//remove the selected process from the ready queue
 			readyQueue.remove(processControlBlock);
 			//set the state of the selected process to running
 			processControlBlock.setProcessState(ProcessStateEnum.RUNNING);			
 			displayCurrentEvent();
-			displayReadyQueue();		
-			displayGanttChartQueue();
+			readyQueue.displayReadyQueue();		
+			ganttChartQueue.displayGanttChartQueue();
 		}
-		//processControlBlock.setProgramCounter();			
+		
 		int remainingBurstTime = processControlBlock.getRemainingBurstTime();					
 		remainingBurstTime--;
 		if (remainingBurstTime == 0) {			
@@ -67,41 +64,51 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 			processControlBlock.setBurstEndTime(Helper.currentTime);
 			//set the state of the process to terminated
 			processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);
-			ganttChartQueue.enqueue(processControlBlock);
+			ganttChartQueue.enqueue(new ProcessControlBlock(processControlBlock.getPID(), processControlBlock.getBurstStartTime(), processControlBlock.getBurstEndTime()));
 		}
 		processControlBlock.setRemainingBurstTime(remainingBurstTime);	
 		Helper.currentTime++;
 	}
 		
 	private ProcessControlBlock getProcessWithLowestRemainingBurstTimeAtCurrentTime() {
-		Iterator<ProcessControlBlock> iterator = readyQueue.getIterator();		
-		int i = 0;
-		ProcessControlBlock processWithLowestRemainingBurstTimeAtCurrentTime = null;
-		while (iterator.hasNext()) {
-			ProcessControlBlock current = iterator.next();		
-			if (i == 0) {
-				processWithLowestRemainingBurstTimeAtCurrentTime = current;
-			}
-			else {
-				if (current.getArrivalTime() <= Helper.currentTime) {	
-					if (current.getRemainingBurstTime() <= processWithLowestRemainingBurstTimeAtCurrentTime.getRemainingBurstTime()) {
-						processWithLowestRemainingBurstTimeAtCurrentTime = current;
-					}
-				}
-			}
-			i++;
-		}
-		return processWithLowestRemainingBurstTimeAtCurrentTime;
+		ProcessControlBlock processControlBlock = readyQueue.peek();
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime) {
+			return processControlBlock;
+		}		
+		return null;
+//		Iterator<ProcessControlBlock> iterator = readyQueue.getIterator();		
+//		int i = 0;
+//		ProcessControlBlock processWithLowestRemainingBurstTimeAtCurrentTime = null;
+//		while (iterator.hasNext()) {
+//			ProcessControlBlock current = iterator.next();		
+//			if (i == 0) {
+//				processWithLowestRemainingBurstTimeAtCurrentTime = current;
+//			}
+//			else {
+//				if (current.getArrivalTime() <= Helper.currentTime) {	
+//					if (current.getRemainingBurstTime() <= processWithLowestRemainingBurstTimeAtCurrentTime.getRemainingBurstTime()) {
+//						processWithLowestRemainingBurstTimeAtCurrentTime = current;
+//					}
+//				}
+//			}
+//			i++;
+//		}
+//		return processWithLowestRemainingBurstTimeAtCurrentTime;
 	}
 	
 	private ProcessControlBlock getProcessWithLowerRemainingBurstTimeAtCurrentTime(int remainingBurstTime) {
-		Iterator<ProcessControlBlock> iterator = readyQueue.getIterator();				
-		while (iterator.hasNext()) {
-			ProcessControlBlock current = iterator.next();
-			if (current.getRemainingBurstTime() < remainingBurstTime && current.getArrivalTime() <= Helper.currentTime) {				
-				return current;
-			}
-		}
+		ProcessControlBlock processControlBlock = readyQueue.peek();
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime && processControlBlock.getRemainingBurstTime() < remainingBurstTime) {
+			return processControlBlock;
+		}		
 		return null;
+//		Iterator<ProcessControlBlock> iterator = readyQueue.getIterator();				
+//		while (iterator.hasNext()) {
+//			ProcessControlBlock current = iterator.next();
+//			if (current.getRemainingBurstTime() < remainingBurstTime && current.getArrivalTime() <= Helper.currentTime) {				
+//				return current;
+//			}
+//		}
+//		return null;
 	}
 }

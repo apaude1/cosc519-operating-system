@@ -1,5 +1,10 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 public class ProcessControlTable {
 	
@@ -12,7 +17,30 @@ public class ProcessControlTable {
 	public void add(int pid, ProcessControlBlock processControlBlock) {
 		processControlTable.put(pid, processControlBlock);
 	}
+
+	public void displayAccountingInformation() {
+		System.out.println("******************************");
+		System.out.println("Process ID | Arrival Time | Completion Time | Burst Time | Waiting Time | Turn Around Time");
+		List<Entry<Integer, ProcessControlBlock>> entries = getListEntrySet();
+		Iterator<Entry<Integer, ProcessControlBlock>> iterator = entries.iterator();
+		int totalWaitTime = 0;
+		int totalTurnAroundTime = 0;
+		while(iterator.hasNext()) {
+			ProcessControlBlock processControlBlock = iterator.next().getValue();		
+			totalWaitTime += processControlBlock.getWaitTime(); 
+			totalTurnAroundTime += processControlBlock.getTurnAroundTime(); 
+	        System.out.println(" " + processControlBlock.getPID() 
+	        	+ "\t\t" + processControlBlock.getArrivalTime()
+	        	+ "\t\t" + processControlBlock.getCompletionTime()
+	        	+ "\t\t" + processControlBlock.getBurstTime() 
+	        	+ "\t\t" + processControlBlock.getWaitTime() 
+	            + "\t\t" + processControlBlock.getTurnAroundTime()); 
+		}
 		
+	    System.out.println("Average waiting time = " + (float)totalWaitTime / (float)entries.size()); 
+	    System.out.println("Average turn around time = " + (float)totalTurnAroundTime / (float)entries.size()); 
+	}
+	
 	public ProcessControlBlock getProcessControlBlockByProcessId(int pid) {
 		return processControlTable.get(pid);
 	}
@@ -26,26 +54,11 @@ public class ProcessControlTable {
 			}
 		}
 		return null;
-	}
-	
-	public void displayAccountingInformation() {
-		System.out.println("Process ID | Arrival Time | Completion Time | Burst Time | Waiting Time | Turn Around Time"); 
-		Set<Integer> keys = processControlTable.keySet();
-		int totalWaitTime = 0;
-		int totalTurnAroundTime = 0;
-		for(Integer key: keys) {
-			ProcessControlBlock processControlBlock = processControlTable.get(key);			
-			totalWaitTime += processControlBlock.getWaitTime(); 
-			totalTurnAroundTime += processControlBlock.getTurnAroundTime(); 
-	        System.out.println(" " + processControlBlock.getPID() 
-	        	+ "\t\t" + processControlBlock.getArrivalTime()
-	        	+ "\t\t" + processControlBlock.getCompletionTime()
-	        	+ "\t\t" + processControlBlock.getBurstTime() 
-	        	+ "\t\t" + processControlBlock.getWaitTime() 
-	            + "\t\t" + processControlBlock.getTurnAroundTime()); 
-		}
-		
-	    System.out.println("Average waiting time = " + (float)totalWaitTime / (float)keys.size()); 
-	    System.out.println("Average turn around time = " + (float)totalTurnAroundTime / (float)keys.size()); 
+	}	
+
+	private List<Entry<Integer, ProcessControlBlock>> getListEntrySet() {
+		List<Entry<Integer, ProcessControlBlock>> entries = new ArrayList<Entry<Integer, ProcessControlBlock>>(processControlTable.entrySet());
+		Collections.sort(entries, new ProcessControlTableComparator());		
+		return entries;
 	}
 }

@@ -1,33 +1,29 @@
 import java.util.Iterator;
 import java.util.Random;
+import java.util.PriorityQueue;
 
 public abstract class Scheduling {
-
+	
+	private Random random;
 	protected ProcessGenerator processGenerator;
 	protected ProcessControlTable processControlTable;
 	protected JobQueue jobQueue;
 	protected ReadyQueue readyQueue;
-	protected GanttChartQueue ganttChartQueue;
-	Random random;
-	protected int startTime = 0;
+	protected GanttChartQueue ganttChartQueue;	
 	
-	public Scheduling() {
+	public Scheduling(ReadyQueue readyQueue) {
+		this.random = new Random(Helper.RANDOM_SEED);
 		this.processGenerator = new ProcessGenerator();
 		this.processControlTable = new ProcessControlTable();
-		this.jobQueue = new JobQueue();
-		this.readyQueue = new ReadyQueue();	
+		this.jobQueue = new JobQueue(new PriorityQueue<ProcessControlBlock>(Helper.JOB_QUEUE_CAPACITY, new ProcessPIdComparator()));
+		this.readyQueue = readyQueue;	
 		this.ganttChartQueue = new GanttChartQueue();
-		random = new Random();
+		
 	}	
 	
 	protected abstract ProcessControlBlock runCPUScheduler();
 	
 	protected abstract void runDispatcher(ProcessControlBlock selectedProcess);
-	
-	private void displayAccountingInformation() {
-		System.out.println("******************************");
-		processControlTable.displayAccountingInformation();
-	}
 	
 	protected void displayCurrentEvent() {
 		System.out.println("******************************");
@@ -38,46 +34,6 @@ public abstract class Scheduling {
 		}
 		else {
 			System.out.println("Executing Process: Idle");
-		}
-	}
-	
-	protected void displayGanttChartQueue() {
-		Iterator<ProcessControlBlock> iterator = ganttChartQueue.getIterator();		
-		int previousProcessBurstEndTime = 0;
-		System.out.print("Gantt Chart: ");
-		while (iterator.hasNext()) {
-			ProcessControlBlock processControlBlock = iterator.next();
-			int burstStartTime = processControlBlock.getBurstStartTime();			
-			if (previousProcessBurstEndTime == burstStartTime) {
-				System.out.print("|" + previousProcessBurstEndTime + "    P" + processControlBlock.getPID() + "    " + processControlBlock.getBurstEndTime());					
-			}
-			else {
-				System.out.print("|" + previousProcessBurstEndTime + "  Idle  " + (processControlBlock.getBurstStartTime() - 1) + "|" + processControlBlock.getBurstStartTime() + "    P" + processControlBlock.getPID() + "    " + processControlBlock.getBurstEndTime());
-			}
-			previousProcessBurstEndTime = processControlBlock.getBurstEndTime() + 1;
-	    }
-		System.out.print("|");
-		System.out.println();
-	}
-	
-	protected void displayReadyQueue() {				
-		Iterator<ProcessControlBlock> iterator = readyQueue.getIterator();
-		int i = 0;
-		if (iterator.hasNext()) {
-			while (iterator.hasNext()) {
-				ProcessControlBlock processControlBlock = iterator.next();
-				if (i == 0) {
-					System.out.print("Ready Queue: |  P" + processControlBlock.getPID());
-				}	
-				else {
-					System.out.print("  |  P" + processControlBlock.getPID());
-				}
-		        i++;
-		    }
-			System.out.println("  |");
-		}
-		else {
-			System.out.println("Ready Queue: Empty");
 		}
 	}
 	
@@ -107,8 +63,8 @@ public abstract class Scheduling {
 			}
 			
 			displayCurrentEvent();
-			displayReadyQueue();
-			displayGanttChartQueue();
+			readyQueue.displayReadyQueue();
+			ganttChartQueue.displayGanttChartQueue();
 			
 			if (Helper.processCounter > Helper.MAX_PROCESS) {
 				break;
@@ -121,14 +77,14 @@ public abstract class Scheduling {
 		}
 		System.out.println("******************************");
 		System.out.print("Final Gantt Chart: ");
-		displayGanttChartQueue();		
-		displayAccountingInformation();
+		ganttChartQueue.displayGanttChartQueue();		
+		processControlTable.displayAccountingInformation();
 	}	
 	
 	protected void runJobScheduler() {
-		System.out.println("******************************");		
-		System.out.println("Current Time: " + Helper.currentTime);	
-		System.out.println("Running Job Scheduler");
+		//System.out.println("******************************");		
+		//System.out.println("Current Time: " + Helper.currentTime);	
+		//System.out.println("Running Job Scheduler");
 		int availableCapacity = readyQueue.getAvailableCapacity();				
 		while (availableCapacity > 0 && !jobQueue.isEmpty()) {
 			ProcessControlBlock processControlBlock = jobQueue.dequeue();
@@ -143,18 +99,4 @@ public abstract class Scheduling {
 			availableCapacity--;
 		}		
 	}
-	
-	//turn around time is the total amount of time spent by the process from coming in the ready state for the first time to its completion
-	protected void updateTurnAroundTimeAndCompletionTime(ProcessControlBlock processControlBlock) {
-		int turnAroundTime = processControlBlock.getBurstTime() + processControlBlock.getWaitTime();
-		processControlBlock.setTurnAroundTime(turnAroundTime);
-		processControlBlock.setCompletionTime(Helper.currentTime);		
-	}	
-	
-	//waiting time is the total time taken by the process in the ready queue
-	protected void updateWaitTime(ProcessControlBlock processControlBlock) {		
-		int waitTime = processControlBlock.getWaitTime();
-		waitTime += processControlBlock.getBurstStartTime() - processControlBlock.getBurstEndTime();
-		processControlBlock.setWaitTime(waitTime);
-	}	
 }

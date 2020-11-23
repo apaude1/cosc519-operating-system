@@ -7,9 +7,9 @@ public class ProcessGenerator {
 	Random random;
 	
 	public ProcessGenerator() {		
-		random = new Random();
+		random = new Random(Helper.RANDOM_SEED);
 	}
-	
+		
 	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue) {
 		int capacity = jobQueue.getAvailableCapacity();
 		//simulate different arrival time by randomly choosing to run

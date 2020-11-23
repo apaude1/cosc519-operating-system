@@ -1,8 +1,10 @@
-// Implement Job Queue using Linked List
+import java.util.Queue;
+
+// Implement Job Queue using Priority Queue
 public class JobQueue extends ProcessQueue {
 				
-	public JobQueue() {
-		super();
+	public JobQueue(Queue<ProcessControlBlock> processQueue) {
+		super(processQueue);
 	}	
 	
 	@Override
