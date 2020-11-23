@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.PriorityQueue;
 
@@ -11,14 +12,16 @@ public abstract class Scheduling {
 	protected ReadyQueue readyQueue;
 	protected GanttChartQueue ganttChartQueue;	
 	
-	public Scheduling(ReadyQueue readyQueue) {
-		this.random = new Random(Helper.RANDOM_SEED);
+	public Scheduling(ReadyQueue readyQueue) {		
+		Helper.contextSwitchCount = 0;
+		Helper.currentTime = 0;
+		Helper.processCounter = 1;
+		this.random = new Random(Helper.randomSeed);
 		this.processGenerator = new ProcessGenerator();
 		this.processControlTable = new ProcessControlTable();
 		this.jobQueue = new JobQueue(new PriorityQueue<ProcessControlBlock>(Helper.JOB_QUEUE_CAPACITY, new ProcessPIdComparator()));
 		this.readyQueue = readyQueue;	
-		this.ganttChartQueue = new GanttChartQueue();
-		
+		this.ganttChartQueue = new GanttChartQueue(new LinkedList<ProcessControlBlock>());		
 	}	
 	
 	protected abstract ProcessControlBlock runCPUScheduler();
@@ -30,7 +33,7 @@ public abstract class Scheduling {
 		ProcessControlBlock runningProcessControlBlock = processControlTable.getRunningProcessControlBlock();
 		System.out.println("Current Time: " + Helper.currentTime);		
 		if (runningProcessControlBlock != null) {			
-			System.out.println("Executing Process: P" + runningProcessControlBlock.getPID() + "; Remaining Burst Time: " + runningProcessControlBlock.getRemainingBurstTime() + "; Priority: " + runningProcessControlBlock.getPriority());
+			System.out.println("Executing Process: P" + runningProcessControlBlock.getPID() + "; Arrival Time: " + runningProcessControlBlock.getArrivalTime() + "; Remaining Burst Time: " + runningProcessControlBlock.getRemainingBurstTime() + "; Priority: " + runningProcessControlBlock.getPriority());
 		}
 		else {
 			System.out.println("Executing Process: Idle");
@@ -62,9 +65,9 @@ public abstract class Scheduling {
 				}
 			}
 			
-			displayCurrentEvent();
-			readyQueue.displayReadyQueue();
-			ganttChartQueue.displayGanttChartQueue();
+			//displayCurrentEvent();
+			//readyQueue.displayReadyQueue();
+			//ganttChartQueue.displayGanttChartQueue();
 			
 			if (Helper.processCounter > Helper.MAX_PROCESS) {
 				break;
@@ -82,9 +85,6 @@ public abstract class Scheduling {
 	}	
 	
 	protected void runJobScheduler() {
-		//System.out.println("******************************");		
-		//System.out.println("Current Time: " + Helper.currentTime);	
-		//System.out.println("Running Job Scheduler");
 		int availableCapacity = readyQueue.getAvailableCapacity();				
 		while (availableCapacity > 0 && !jobQueue.isEmpty()) {
 			ProcessControlBlock processControlBlock = jobQueue.dequeue();
@@ -98,5 +98,16 @@ public abstract class Scheduling {
 			readyQueue.enqueue(processControlBlock);
 			availableCapacity--;
 		}		
+	}
+	
+	protected void setUpRunningProcess(ProcessControlBlock scheduledProcess) {
+		scheduledProcess.setBurstStartTime(Helper.currentTime);		
+		//remove the selected process from the ready queue
+		readyQueue.remove(scheduledProcess);		
+		//set the state of the selected process to running
+		scheduledProcess.setProcessState(ProcessStateEnum.RUNNING);
+		//displayCurrentEvent();
+		//readyQueue.displayReadyQueue();		
+		//ganttChartQueue.displayGanttChartQueue();
 	}
 }

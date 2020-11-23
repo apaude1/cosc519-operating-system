@@ -1,11 +1,11 @@
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Queue;
 
 //Implement Job Queue using Linked List
 public class GanttChartQueue extends ProcessQueue {
 				
-	public GanttChartQueue() {
-		super(new LinkedList<ProcessControlBlock>());
+	public GanttChartQueue(Queue<ProcessControlBlock> processQueue) {
+		super(processQueue);
 	}	
 	
 	@Override

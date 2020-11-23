@@ -2,7 +2,7 @@ import java.util.PriorityQueue;
 
 public class FirstComeFirstServeScheduling extends Scheduling {	
 	
-	public FirstComeFirstServeScheduling() {
+	public FirstComeFirstServeScheduling() {		
 		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeComparator())));
 	}		
 	
@@ -17,30 +17,21 @@ public class FirstComeFirstServeScheduling extends Scheduling {
 	
 	@Override
 	protected void runDispatcher(ProcessControlBlock scheduledProcess) {	
-		//start executing the scheduled process
-		scheduledProcess.setBurstStartTime(Helper.currentTime);		
-		//remove the selected process from the ready queue
-		readyQueue.remove(scheduledProcess);
-		ProcessControlBlock processControlBlock = scheduledProcess;
-		//set the state of the selected process to running
-		processControlBlock.setProcessState(ProcessStateEnum.RUNNING);
-		displayCurrentEvent();
-		readyQueue.displayReadyQueue();		
-		ganttChartQueue.displayGanttChartQueue();
+		setUpRunningProcess(scheduledProcess);
 			
 		//processControlBlock.setProgramCounter();			
-		int remainingBurstTime = processControlBlock.getRemainingBurstTime();					
+		int remainingBurstTime = scheduledProcess.getRemainingBurstTime();					
 		Helper.currentTime += remainingBurstTime - 1;
 		remainingBurstTime = 0;
-		processControlBlock.setRemainingBurstTime(remainingBurstTime);	
-		processControlBlock.setBurstEndTime(Helper.currentTime);
-		processControlBlock.setCompletionTime(Helper.currentTime);
-		processControlBlock.setTurnAroundTime(Helper.currentTime - processControlBlock.getArrivalTime() + 1);
-		processControlBlock.setWaitTime(processControlBlock.getTurnAroundTime() - processControlBlock.getBurstTime());
-		ganttChartQueue.enqueue(processControlBlock);		
+		scheduledProcess.setRemainingBurstTime(remainingBurstTime);	
+		scheduledProcess.setBurstEndTime(Helper.currentTime);
+		scheduledProcess.setCompletionTime(Helper.currentTime);
+		scheduledProcess.setTurnAroundTime(Helper.currentTime - scheduledProcess.getArrivalTime() + 1);
+		scheduledProcess.setWaitTime(scheduledProcess.getTurnAroundTime() - scheduledProcess.getBurstTime());
+		ganttChartQueue.enqueue(new ProcessControlBlock(scheduledProcess.getPID(), scheduledProcess.getBurstStartTime(), scheduledProcess.getBurstEndTime()));
 		
 		//set the state of the process to terminated
-		processControlBlock.setProcessState(ProcessStateEnum.TERMINATED);
+		scheduledProcess.setProcessState(ProcessStateEnum.TERMINATED);
 		Helper.currentTime++;
 	}
 }

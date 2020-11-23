@@ -7,7 +7,7 @@ public class ProcessGenerator {
 	Random random;
 	
 	public ProcessGenerator() {		
-		random = new Random(Helper.RANDOM_SEED);
+		random = new Random(Helper.randomSeed);
 	}
 		
 	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue) {
