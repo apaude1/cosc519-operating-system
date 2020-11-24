@@ -15,9 +15,9 @@ public abstract class Scheduling {
 	public Scheduling(ReadyQueue readyQueue) {		
 		Helper.contextSwitchCount = 0;
 		Helper.currentTime = 0;
-		Helper.processCounter = 1;
+		Helper.processCounter = 1;		
 		this.random = new Random(Helper.randomSeed);
-		this.processGenerator = new ProcessGenerator();
+		this.processGenerator = new ProcessGenerator(random);
 		this.processControlTable = new ProcessControlTable();
 		this.jobQueue = new JobQueue(new PriorityQueue<ProcessControlBlock>(Helper.JOB_QUEUE_CAPACITY, new ProcessPIdComparator()));
 		this.readyQueue = readyQueue;	

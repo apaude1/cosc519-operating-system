@@ -21,7 +21,7 @@ public class ProcessControlTable {
 	public void displayAccountingInformation() {
 		System.out.println("Number of context switches: " + Helper.contextSwitchCount);
 		System.out.println("******************************");
-		System.out.println("Process ID | Arrival Time | Burst Units | Burst Start Time | Burst End Time | Time Waiting | Turn Around Time");
+		System.out.println("Process ID | Arrival Time | Priority | Burst Units | Burst Start Time | Burst End Time | Time Waiting | Turn Around Time");
 		List<Entry<Integer, ProcessControlBlock>> entries = getListEntrySet();
 		Iterator<Entry<Integer, ProcessControlBlock>> iterator = entries.iterator();
 		int totalWaitTime = 0;
@@ -32,11 +32,12 @@ public class ProcessControlTable {
 			totalTurnAroundTime += processControlBlock.getTurnAroundTime(); 
 	        System.out.println("   P" + processControlBlock.getPID() 
 	        	+ "\t\t  " + processControlBlock.getArrivalTime()
-	        	+ "\t\t " + processControlBlock.getBurstTime() 
-	        	+ "\t\t " + processControlBlock.getBurstStartTime() 
-	        	+ "\t\t  " + processControlBlock.getBurstEndTime() 
-	        	+ "\t\t   " + processControlBlock.getWaitTime() 
-	            + "\t\t   " + processControlBlock.getTurnAroundTime()); 
+	        	+ "\t\t" + processControlBlock.getPriority()
+	        	+ "\t\t" + processControlBlock.getBurstTime() 
+	        	+ "\t\t" + processControlBlock.getBurstStartTime() 
+	        	+ "\t\t" + processControlBlock.getBurstEndTime() 
+	        	+ "\t\t" + processControlBlock.getWaitTime() 
+	            + "\t\t" + processControlBlock.getTurnAroundTime()); 
 		}
 		
 	    System.out.println("Average waiting time = " + (float)totalWaitTime / (float)entries.size()); 
