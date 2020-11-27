@@ -1,30 +1,21 @@
 
 public class Main {
-	public static void main(String[] args) {
 		
-		System.out.println("******************************************************************************************");
-		System.out.println("Start of First Come First Serve Scheduling Simulation");
-		FirstComeFirstServeScheduling firstComeFirstServeScheduling = new FirstComeFirstServeScheduling();
-		firstComeFirstServeScheduling.run();
-		System.out.println("End of First Come First Serve Scheduling Simulation");
+	public static void main(String[] args) throws InterruptedException {		
 		
-		System.out.println("******************************************************************************************");
-		System.out.println("Start of Round Robin Scheduling Simulation");
-		RoundRobinScheduling roundRobinScheduling = new RoundRobinScheduling();
-		roundRobinScheduling.run();
-		System.out.println("End of Round Robin Scheduling Simulation");		
+		Metrics metrics = new Metrics();
+		Thread a = new Thread(new FirstComeFirstServeScheduling(metrics, AlgorithmEnum.FIRST_COME_FIRST_SERVE));
+		a.start();
+		Thread b = new Thread(new RoundRobinScheduling(metrics, AlgorithmEnum.ROUND_ROBIN));
+		b.start();
+		Thread c = new Thread(new ShortestRemainingTimeFirstScheduling(metrics, AlgorithmEnum.SHORTEST_REMAINING_TIME_FIRST));
+		c.start();
+		Thread d = new Thread(new PriorityScheduling(metrics, AlgorithmEnum.PRIORITY));
+		d.start();
 		
-		System.out.println("******************************************************************************************");
-		System.out.println("Start of Shortest Time Remaining First Scheduling Simulation");
-		ShortestRemainingTimeFirstScheduling shortestRemainingTimeFirstScheduling = new ShortestRemainingTimeFirstScheduling();
-		shortestRemainingTimeFirstScheduling.run();
-		System.out.println("End of Shortest Time Remaining First Scheduling Simulation");		
-		
-		System.out.println("******************************************************************************************");
-		System.out.println("Start of Priority Scheduling Simulation");
-		PriorityScheduling priorityScheduling = new PriorityScheduling();
-		priorityScheduling.run();
-		System.out.println("End of Priority Scheduling Simulation");	
-		System.out.println("******************************************************************************************");
-	}		
+		a.join();
+		b.join();
+		c.join();
+		d.join();		
+	}
 }

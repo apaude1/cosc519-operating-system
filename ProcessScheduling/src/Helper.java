@@ -1,13 +1,11 @@
 
 public class Helper {
-	public static int contextSwitchCount = 0;
-	public static int currentTime = 0;
-	public static int processCounter = 1;	
-	public static final int randomSeed = 10;// + new Random().nextInt(100);
+	public static boolean pause = false;
+	public static final int RANDOM_SEED = 10;
 	public static final int JOB_QUEUE_CAPACITY = 10;	
 	public static final int MAX_BURST_TIME = 5;	
 	public static final int MAX_PRIORITY = 10;
-	public static final int MAX_PROCESS = 50; 
+	public static final int MAX_PROCESS = -1; //-1 would run indefinitely
 	public static final int QUANTUM = 2;
 	public static final int READY_QUEUE_CAPACITY = 5;	
 	public static final float THRESHOLD_CAPACITY = 0.5f;	

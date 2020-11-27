@@ -2,8 +2,8 @@ import java.util.PriorityQueue;
 
 public class PriorityScheduling extends Scheduling {	
 	
-	public PriorityScheduling() {
-		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimePriorityComparator())));		
+	public PriorityScheduling(Metrics metrics, AlgorithmEnum algorithmEnum) {
+		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimePriorityComparator())), metrics, algorithmEnum);		
 	}
 		
 	@Override
@@ -25,7 +25,7 @@ public class PriorityScheduling extends Scheduling {
 			//put it back to the ready queue
 			readyQueue.enqueue(currentRunningProcess);	
 			//context switched
-			Helper.contextSwitchCount++;
+			contextSwitchCount++;
 			
 			setUpRunningProcess(scheduledProcess);		
 		}
@@ -41,20 +41,20 @@ public class PriorityScheduling extends Scheduling {
 		remainingBurstTime--;			
 		scheduledProcess.setRemainingBurstTime(remainingBurstTime);				
 		if (remainingBurstTime == 0) {				
-			scheduledProcess.setCompletionTime(Helper.currentTime);
-			scheduledProcess.setTurnAroundTime(Helper.currentTime - scheduledProcess.getArrivalTime() + 1);
+			scheduledProcess.setCompletionTime(currentTime);
+			scheduledProcess.setTurnAroundTime(currentTime - scheduledProcess.getArrivalTime() + 1);
 			scheduledProcess.setWaitTime(scheduledProcess.getTurnAroundTime() - scheduledProcess.getBurstTime());		
-			scheduledProcess.setBurstEndTime(Helper.currentTime);			
+			scheduledProcess.setBurstEndTime(currentTime);			
 			//set the state of the process to terminated
 			scheduledProcess.setProcessState(ProcessStateEnum.TERMINATED);
 			ganttChartQueue.enqueue(new ProcessControlBlock(scheduledProcess.getPID(), scheduledProcess.getBurstStartTime(), scheduledProcess.getBurstEndTime()));
 		}
-		Helper.currentTime++;
+		currentTime++;
 	}
 	
 	private ProcessControlBlock getProcessWithHighestPriorityAtCurrentTime() {
 		ProcessControlBlock processControlBlock = readyQueue.peek();
-		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime) {
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= currentTime) {
 			return processControlBlock;
 		}		
 		return null;
@@ -62,7 +62,7 @@ public class PriorityScheduling extends Scheduling {
 	
 	private ProcessControlBlock getProcessWithHigherPriorityAtCurrentTime(int priority) {
 		ProcessControlBlock processControlBlock = readyQueue.peek();
-		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime && processControlBlock.getPriority() < priority) {
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= currentTime && processControlBlock.getPriority() < priority) {
 			return processControlBlock;
 		}		
 		return null;

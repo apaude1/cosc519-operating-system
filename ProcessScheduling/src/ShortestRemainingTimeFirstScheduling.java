@@ -2,8 +2,8 @@ import java.util.PriorityQueue;
 
 public class ShortestRemainingTimeFirstScheduling extends Scheduling {	
 		
-	public ShortestRemainingTimeFirstScheduling() {		
-		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeRemainingBurstTimeComparator())));
+	public ShortestRemainingTimeFirstScheduling(Metrics metrics, AlgorithmEnum algorithmEnum) {		
+		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeRemainingBurstTimeComparator())), metrics, algorithmEnum);
 	}
 		
 	@Override
@@ -25,7 +25,7 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 			//put it back to the ready queue
 			readyQueue.enqueue(currentRunningProcess);
 			//context switched
-			Helper.contextSwitchCount++;
+			contextSwitchCount++;
 				
 			setUpRunningProcess(scheduledProcess);
 		}
@@ -40,21 +40,21 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 		int remainingBurstTime = scheduledProcess.getRemainingBurstTime();					
 		remainingBurstTime--;
 		if (remainingBurstTime == 0) {			
-			scheduledProcess.setCompletionTime(Helper.currentTime);
-			scheduledProcess.setTurnAroundTime(Helper.currentTime - scheduledProcess.getArrivalTime() + 1);
+			scheduledProcess.setCompletionTime(currentTime);
+			scheduledProcess.setTurnAroundTime(currentTime - scheduledProcess.getArrivalTime() + 1);
 			scheduledProcess.setWaitTime(scheduledProcess.getTurnAroundTime() - scheduledProcess.getBurstTime());
-			scheduledProcess.setBurstEndTime(Helper.currentTime);
+			scheduledProcess.setBurstEndTime(currentTime);
 			//set the state of the process to terminated
 			scheduledProcess.setProcessState(ProcessStateEnum.TERMINATED);
 			ganttChartQueue.enqueue(new ProcessControlBlock(scheduledProcess.getPID(), scheduledProcess.getBurstStartTime(), scheduledProcess.getBurstEndTime()));
 		}
 		scheduledProcess.setRemainingBurstTime(remainingBurstTime);	
-		Helper.currentTime++;
+		currentTime++;
 	}
 		
 	private ProcessControlBlock getProcessWithLowestRemainingBurstTimeAtCurrentTime() {
 		ProcessControlBlock processControlBlock = readyQueue.peek();
-		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime) {
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= currentTime) {
 			return processControlBlock;
 		}		
 		return null;
@@ -62,7 +62,7 @@ public class ShortestRemainingTimeFirstScheduling extends Scheduling {
 	
 	private ProcessControlBlock getProcessWithLowerRemainingBurstTimeAtCurrentTime(int remainingBurstTime) {
 		ProcessControlBlock processControlBlock = readyQueue.peek();
-		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime && processControlBlock.getRemainingBurstTime() < remainingBurstTime) {
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= currentTime && processControlBlock.getRemainingBurstTime() < remainingBurstTime) {
 			return processControlBlock;
 		}		
 		return null;

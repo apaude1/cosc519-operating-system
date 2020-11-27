@@ -2,14 +2,14 @@ import java.util.LinkedList;
 
 public class RoundRobinScheduling extends Scheduling {	
 		
-	public RoundRobinScheduling() {
-		super(new ReadyQueue(new LinkedList<ProcessControlBlock>()));
+	public RoundRobinScheduling(Metrics metrics, AlgorithmEnum algorithmEnum) {
+		super(new ReadyQueue(new LinkedList<ProcessControlBlock>()), metrics, algorithmEnum);
 	}		
 		
 	@Override
 	protected ProcessControlBlock runCPUScheduler() {
 		ProcessControlBlock processControlBlock = readyQueue.peek();
-		if (processControlBlock != null && processControlBlock.getArrivalTime() <= Helper.currentTime) {				
+		if (processControlBlock != null && processControlBlock.getArrivalTime() <= currentTime) {				
 			return processControlBlock;
 		}
 		return null;
@@ -25,7 +25,7 @@ public class RoundRobinScheduling extends Scheduling {
 			//put it back to the ready queue
 			readyQueue.enqueue(currentRunningProcess);				
 			//context switched
-			Helper.contextSwitchCount++;
+			contextSwitchCount++;
 			
 			setUpRunningProcess(scheduledProcess);
 		}
@@ -38,24 +38,24 @@ public class RoundRobinScheduling extends Scheduling {
 		}
 		
 		//start executing the scheduled process
-		scheduledProcess.setBurstStartTime(Helper.currentTime);
+		scheduledProcess.setBurstStartTime(currentTime);
 		int remainingBurstTime = scheduledProcess.getRemainingBurstTime();
 		if (remainingBurstTime > Helper.QUANTUM) {
-			Helper.currentTime += Helper.QUANTUM - 1;
+			currentTime += Helper.QUANTUM - 1;
 			remainingBurstTime -= Helper.QUANTUM;			
 		} 
 		else {
-			Helper.currentTime += remainingBurstTime - 1;
+			currentTime += remainingBurstTime - 1;
 			remainingBurstTime = 0;			
-			scheduledProcess.setCompletionTime(Helper.currentTime);
-			scheduledProcess.setTurnAroundTime(Helper.currentTime - scheduledProcess.getArrivalTime() + 1);
+			scheduledProcess.setCompletionTime(currentTime);
+			scheduledProcess.setTurnAroundTime(currentTime - scheduledProcess.getArrivalTime() + 1);
 			scheduledProcess.setWaitTime(scheduledProcess.getTurnAroundTime() - scheduledProcess.getBurstTime());
 			//set the state of the process to terminated
 			scheduledProcess.setProcessState(ProcessStateEnum.TERMINATED);	
 		}
 		scheduledProcess.setRemainingBurstTime(remainingBurstTime);
-		scheduledProcess.setBurstEndTime(Helper.currentTime);
+		scheduledProcess.setBurstEndTime(currentTime);
 		ganttChartQueue.enqueue(new ProcessControlBlock(scheduledProcess.getPID(), scheduledProcess.getBurstStartTime(), scheduledProcess.getBurstEndTime()));
-		Helper.currentTime++;
+		currentTime++;
 	}
 }

@@ -7,6 +7,7 @@ public class ProcessControlBlock {
 	private int burstStartTime;
 	private int burstEndTime;
 	private int waitTime;
+	private int responseTime;
 	private int completionTime;
 	private int turnAroundTime;
 	private int priority;
@@ -75,6 +76,14 @@ public class ProcessControlBlock {
 	
 	public void setWaitTime(int waitTime) { //set wait time of the process
 		this.waitTime = waitTime; 
+	}
+	
+	public int getResponseTime() { //get response time of the process
+		return responseTime; 
+	}
+	
+	public void setResponseTime(int responseTime) { //set response time of the process
+		this.responseTime = responseTime;
 	}
 	
 	public int getCompletionTime() { //get completion time of the process
