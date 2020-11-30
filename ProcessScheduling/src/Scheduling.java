@@ -36,7 +36,7 @@ public abstract class Scheduling implements Runnable {
 		
 	public void run() {		
 		//simulate random arriving processes in the job queue
-		processGenerator.randomizeProcessArrivalInJobQueue(jobQueue, currentTime);					
+		processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);					
 		while(true) {								
 			//run job scheduler to populate ready queue
 			runJobScheduler();		
@@ -63,11 +63,10 @@ public abstract class Scheduling implements Runnable {
 			
 			//simulate random arrival of processes
 			//this would add new processes with a new arrival time when job scheduler runs
-			processGenerator.randomizeProcessArrivalInJobQueue(jobQueue, currentTime);
+			processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);
 		}
 	}
-	
-	
+		
 	protected void runJobScheduler() {
 		int availableCapacity = readyQueue.getAvailableCapacity();				
 		while (availableCapacity > 0 && !jobQueue.isEmpty()) {

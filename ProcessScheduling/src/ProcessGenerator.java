@@ -18,12 +18,12 @@ public class ProcessGenerator {
 		return processCounter;
 	}
 	
-	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue, int currentTime) {
+	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue) {
 		int capacity = jobQueue.getAvailableCapacity();
 		//simulate different arrival time by randomly choosing to run
 		int size = random.nextInt(capacity);
 		if (size > 0) {
-			ArrayList<ProcessControlBlock> processes = generate(size, currentTime);		
+			ArrayList<ProcessControlBlock> processes = generate(size);		
 			//populate the job queue
 			Iterator<ProcessControlBlock> iterator = processes.iterator();
 		    while (iterator.hasNext()) {
@@ -34,7 +34,7 @@ public class ProcessGenerator {
 		}
 	}
 	
-	private ArrayList<ProcessControlBlock> generate(int numberOfProcesses, int currentTime) {	
+	private ArrayList<ProcessControlBlock> generate(int numberOfProcesses) {	
 		ArrayList<ProcessControlBlock> processes = new ArrayList<ProcessControlBlock>();
 		for (int i = 0; i < numberOfProcesses; i++) {
 			ProcessControlBlock processControlBlock = new ProcessControlBlock(processCounter, ProcessStateEnum.NEW, 1);			
