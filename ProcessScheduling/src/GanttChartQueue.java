@@ -22,10 +22,10 @@ public class GanttChartQueue extends ProcessQueue {
 			return false;
 	}
 	
-	public void displayGanttChartQueue(AlgorithmEnum algorithmEnum) {		
+	public void displayGanttChartQueue(SchedulerTypeEnum schedulerTypeEnum) {		
 		Iterator<ProcessControlBlock> iterator = processQueue.iterator();		
 		int previousProcessBurstEndTime = 0;
-		System.out.print(algorithmEnum.toString() + " Gantt Chart: ");
+		System.out.print(schedulerTypeEnum.toString() + " Gantt Chart: ");
 		while (iterator.hasNext()) {
 			ProcessControlBlock processControlBlock = iterator.next();
 			int burstStartTime = processControlBlock.getBurstStartTime();			

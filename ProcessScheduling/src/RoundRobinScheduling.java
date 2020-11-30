@@ -2,8 +2,8 @@ import java.util.LinkedList;
 
 public class RoundRobinScheduling extends Scheduling {	
 		
-	public RoundRobinScheduling(Metrics metrics, AlgorithmEnum algorithmEnum) {
-		super(new ReadyQueue(new LinkedList<ProcessControlBlock>()), metrics, algorithmEnum);
+	public RoundRobinScheduling(Metrics metrics, int threadSequence, SchedulerTypeEnum schedulerTypeEnum) {
+		super(new ReadyQueue(new LinkedList<ProcessControlBlock>()), metrics, threadSequence, schedulerTypeEnum);
 	}		
 		
 	@Override
@@ -37,25 +37,27 @@ public class RoundRobinScheduling extends Scheduling {
 			setUpRunningProcess(scheduledProcess);
 		}
 		
-		//start executing the scheduled process
-		scheduledProcess.setBurstStartTime(currentTime);
-		int remainingBurstTime = scheduledProcess.getRemainingBurstTime();
-		if (remainingBurstTime > Helper.QUANTUM) {
-			currentTime += Helper.QUANTUM - 1;
-			remainingBurstTime -= Helper.QUANTUM;			
-		} 
-		else {
-			currentTime += remainingBurstTime - 1;
-			remainingBurstTime = 0;			
-			scheduledProcess.setCompletionTime(currentTime);
-			scheduledProcess.setTurnAroundTime(currentTime - scheduledProcess.getArrivalTime() + 1);
-			scheduledProcess.setWaitTime(scheduledProcess.getTurnAroundTime() - scheduledProcess.getBurstTime());
-			//set the state of the process to terminated
-			scheduledProcess.setProcessState(ProcessStateEnum.TERMINATED);	
+		if (scheduledProcess != null) {
+			//start executing the scheduled process
+			int remainingBurstTime = scheduledProcess.getRemainingBurstTime();
+			if (remainingBurstTime > Helper.QUANTUM) {
+				currentTime += Helper.QUANTUM - 1;
+				remainingBurstTime -= Helper.QUANTUM;			
+			} 
+			else {
+				currentTime += remainingBurstTime - 1;
+				remainingBurstTime = 0;			
+				scheduledProcess.setCompletionTime(currentTime);
+				scheduledProcess.setTurnAroundTime(currentTime - scheduledProcess.getArrivalTime() + 1);
+				scheduledProcess.setWaitTime(scheduledProcess.getTurnAroundTime() - scheduledProcess.getBurstTime());
+				scheduledProcess.setResponseRatioTime((float)scheduledProcess.getBurstTime() / (float)scheduledProcess.getTurnAroundTime());
+				//set the state of the process to terminated
+				scheduledProcess.setProcessState(ProcessStateEnum.TERMINATED);	
+			}
+			scheduledProcess.setRemainingBurstTime(remainingBurstTime);
+			scheduledProcess.setBurstEndTime(currentTime);
+			ganttChartQueue.enqueue(new ProcessControlBlock(scheduledProcess.getPID(), scheduledProcess.getBurstStartTime(), scheduledProcess.getBurstEndTime()));
 		}
-		scheduledProcess.setRemainingBurstTime(remainingBurstTime);
-		scheduledProcess.setBurstEndTime(currentTime);
-		ganttChartQueue.enqueue(new ProcessControlBlock(scheduledProcess.getPID(), scheduledProcess.getBurstStartTime(), scheduledProcess.getBurstEndTime()));
 		currentTime++;
 	}
 }

@@ -22,14 +22,14 @@ public class ReadyQueue extends ProcessQueue {
 			return false;
 	}
 	
-	public void displayReadyQueue(AlgorithmEnum algorithmEnum) {				
+	public void displayReadyQueue(SchedulerTypeEnum schedulerTypeEnum) {				
 		Iterator<ProcessControlBlock> iterator = processQueue.iterator();
 		int i = 0;
 		if (iterator.hasNext()) {
 			while (iterator.hasNext()) {
 				ProcessControlBlock processControlBlock = iterator.next();
 				if (i == 0) {
-					System.out.print(algorithmEnum.toString() + " Ready Queue: |  P" + processControlBlock.getPID());
+					System.out.print(schedulerTypeEnum.toString() + " Ready Queue: |  P" + processControlBlock.getPID());
 				}	
 				else {
 					System.out.print("  |  P" + processControlBlock.getPID());

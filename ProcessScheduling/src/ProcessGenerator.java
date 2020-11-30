@@ -6,35 +6,39 @@ public class ProcessGenerator {
 	
 	private int processCounter;
 	Random random;
+	private ProcessControlTable processControlTable;
 		
-	public ProcessGenerator(Random random) {
+	public ProcessGenerator(Random random, ProcessControlTable processControlTable) {
 		this.processCounter = 1;
 		this.random = random;
+		this.processControlTable = processControlTable;
 	}
 		
 	public int getProcessCounter() {
 		return processCounter;
 	}
 	
-	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue) {
+	public void randomizeProcessArrivalInJobQueue(JobQueue jobQueue, int currentTime) {
 		int capacity = jobQueue.getAvailableCapacity();
 		//simulate different arrival time by randomly choosing to run
 		int size = random.nextInt(capacity);
 		if (size > 0) {
-			ArrayList<ProcessControlBlock> processes = generate(size);		
+			ArrayList<ProcessControlBlock> processes = generate(size, currentTime);		
 			//populate the job queue
 			Iterator<ProcessControlBlock> iterator = processes.iterator();
 		    while (iterator.hasNext()) {
-		    	ProcessControlBlock processControlBlock = iterator.next();
+		    	ProcessControlBlock processControlBlock = iterator.next();		    	
 		        jobQueue.enqueue(processControlBlock);
+		        processControlTable.add(processControlBlock.getPID(), processControlBlock);
 		    }
 		}
 	}
 	
-	private ArrayList<ProcessControlBlock> generate(int numberOfProcesses) {	
+	private ArrayList<ProcessControlBlock> generate(int numberOfProcesses, int currentTime) {	
 		ArrayList<ProcessControlBlock> processes = new ArrayList<ProcessControlBlock>();
 		for (int i = 0; i < numberOfProcesses; i++) {
-			processes.add(new ProcessControlBlock(processCounter, ProcessStateEnum.NEW, 1));
+			ProcessControlBlock processControlBlock = new ProcessControlBlock(processCounter, ProcessStateEnum.NEW, 1);			
+			processes.add(processControlBlock);
 			if (processCounter == Helper.MAX_PROCESS) {
 				break;
 			}

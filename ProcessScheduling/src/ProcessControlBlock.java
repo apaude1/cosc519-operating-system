@@ -2,6 +2,7 @@
 public class ProcessControlBlock {
 	private int pid;
 	private int arrivalTime;
+	private int startTime;
 	private int burstTime;
 	private int remainingBurstTime;
 	private int burstStartTime;
@@ -10,6 +11,7 @@ public class ProcessControlBlock {
 	private int responseTime;
 	private int completionTime;
 	private int turnAroundTime;
+	private float responseRatioTime;
 	private int priority;
 	private ProcessStateEnum processState; //NEW, READY, RUNNING, TERMINATED
 	private int programCounter;	
@@ -36,6 +38,14 @@ public class ProcessControlBlock {
 	
 	public void setArrivalTime(int arrivalTime) { //set arrival time of the process
 		this.arrivalTime = arrivalTime; 
+	}
+	
+	public int getStartTime() { //get start time of the process
+		return startTime; 
+	}
+	
+	public void setStartTime(int startTime) { //set start time of the process
+		this.startTime = startTime;
 	}
 	
 	public int getBurstTime() { //get burst time of the process
@@ -84,6 +94,14 @@ public class ProcessControlBlock {
 	
 	public void setResponseTime(int responseTime) { //set response time of the process
 		this.responseTime = responseTime;
+	}
+	
+	public float getResponseRatioTime() { //get response ratio time of the process
+		return responseRatioTime; 
+	}
+	
+	public void setResponseRatioTime(float responseRatioTime) { //set response ratio time of the process
+		this.responseRatioTime = responseRatioTime;
 	}
 	
 	public int getCompletionTime() { //get completion time of the process
