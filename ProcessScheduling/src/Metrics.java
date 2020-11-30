@@ -54,8 +54,8 @@ public class Metrics {
 			System.out.println("Average response time for       " + entries.size() + " processes: " + (float)Math.round(((float)totalReponseTime / (float)entries.size()) * 100.0) / 100.0); 
 		    System.out.println("Average waiting time for        " + entries.size() + " processes: " + (float)Math.round(((float)totalWaitTime / (float)entries.size()) * 100.0) / 100.0); 
 		    System.out.println("Average turn around time for    " + entries.size() + " processes: " + (float)Math.round(((float)totalTurnAroundTime / (float)entries.size()) * 100.0) / 100.0); 
-		    System.out.println("Average Response ratio time for " + entries.size() + " processes: " + (float)Math.round((((float)totalResponseRatioTime / (float)entries.size())) * 100) / 100.0);
-		    System.out.println("Average Penalty rate for        " + entries.size() + " processes: " + (float)Math.round((((float)totalPenaltyRate / (float)entries.size())) * 100) / 100.0);
+		    System.out.println("Average response ratio time for " + entries.size() + " processes: " + (float)Math.round((((float)totalResponseRatioTime / (float)entries.size())) * 100) / 100.0);
+		    System.out.println("Average penalty rate for        " + entries.size() + " processes: " + (float)Math.round((((float)totalPenaltyRate / (float)entries.size())) * 100) / 100.0);
 		    System.out.println("# of context switches with      " + entries.size() + " processes: " + contextSwitchCount);
 
 			number++;
