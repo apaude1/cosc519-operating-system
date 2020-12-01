@@ -1,6 +1,6 @@
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.PriorityQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public abstract class Scheduling implements Runnable {
 		
@@ -23,7 +23,7 @@ public abstract class Scheduling implements Runnable {
 		this.random = new Random(Helper.RANDOM_SEED);
 		this.processControlTable = new ProcessControlTable();
 		this.processGenerator = new ProcessGenerator(random, processControlTable);	
-		this.jobQueue = new JobQueue(new PriorityQueue<ProcessControlBlock>(Helper.JOB_QUEUE_CAPACITY, new ProcessPIdComparator()));
+		this.jobQueue = new JobQueue(new PriorityBlockingQueue<ProcessControlBlock>(Helper.JOB_QUEUE_CAPACITY, new ProcessPIdComparator()));
 		this.readyQueue = readyQueue;	
 		this.ganttChartQueue = new GanttChartQueue(new LinkedList<ProcessControlBlock>());
 		this.metrics = metrics;		
@@ -34,18 +34,17 @@ public abstract class Scheduling implements Runnable {
 	
 	protected abstract void runDispatcher(ProcessControlBlock selectedProcess);	
 		
-	public void run() {		
-		//simulate random arriving processes in the job queue
-		processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);					
+	public void run() {	
+		//this would generate new processes and populate job queue
+		processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);
 		while(true) {								
 			//run job scheduler to populate ready queue
 			runJobScheduler();		
 			while(!readyQueue.isEmpty() || processControlTable.getRunningProcessControlBlock() != null) {				
 				ProcessControlBlock processControlBlock = runCPUScheduler();
 				runDispatcher(processControlBlock);
-				//TODO: isBelowThreshold is causing different arrival times
 				//run job scheduler when ready queue falls below threshold
-				if (readyQueue.isEmpty()) {
+				if (readyQueue.isBelowThresholdCapacity()) {					
 					runJobScheduler();
 				}
 			}
@@ -54,16 +53,20 @@ public abstract class Scheduling implements Runnable {
 //			metrics.displayReadyQueue(readyQueue, threadSequence, schedulerTypeEnum);
 //			metrics.displayGanttChartQueue(ganttChartQueue, threadSequence, schedulerTypeEnum);
 			metrics.displayAccountingInformation(processControlTable, contextSwitchCount, currentTime, threadSequence, schedulerTypeEnum);
-				
-			
+							
 			if (processGenerator.getProcessCounter() == Helper.MAX_PROCESS) {
 				break;
 			}
 			currentTime++;
 			
-			//simulate random arrival of processes
-			//this would add new processes with a new arrival time when job scheduler runs
+			//this would generate new processes and populate job queue
 			processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 		
@@ -81,6 +84,16 @@ public abstract class Scheduling implements Runnable {
 			readyQueue.enqueue(processControlBlock);
 			availableCapacity--;
 		}		
+		
+		/*TEST Code
+		 * int availableCapacity = readyQueue.getAvailableCapacity();
+		 * Iterator<ProcessControlBlock> iterator = jobQueue.getIterator(); while
+		 * (availableCapacity > 0 && iterator.hasNext()) { ProcessControlBlock
+		 * processControlBlock = iterator.next(); if
+		 * (processControlBlock.getArrivalTime() == currentTime) { processControlBlock =
+		 * jobQueue.dequeue(); readyQueue.enqueue(processControlBlock);
+		 * availableCapacity--; } }
+		 */
 	}
 	
 	protected void setUpRunningProcess(ProcessControlBlock scheduledProcess) {

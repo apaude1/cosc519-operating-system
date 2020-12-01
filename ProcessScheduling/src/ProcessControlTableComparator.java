@@ -6,9 +6,10 @@ public class ProcessControlTableComparator implements Comparator<Entry<Integer, 
 	
 	@Override
 	public int compare(Entry<Integer, ProcessControlBlock> arg0, Entry<Integer, ProcessControlBlock> arg1) {
-		if (arg0.getValue().getArrivalTime() > arg1.getValue().getArrivalTime()) 
+		if (arg0.getValue().getStartTime() > arg1.getValue().getStartTime()) 
             return 1; 
-        else if (arg0.getValue().getArrivalTime() < arg1.getValue().getArrivalTime()) 
+        else if (arg0.getValue().getStartTime
+        		() < arg1.getValue().getStartTime()) 
             return -1; 
         else {
         	if (arg0.getValue().getCompletionTime() > arg1.getValue().getCompletionTime()) 

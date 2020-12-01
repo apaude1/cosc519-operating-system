@@ -22,7 +22,7 @@ public class Metrics {
 			}
 			
 			System.out.println("******************************" + schedulerTypeEnum.toString() + "******************************");
-			//System.out.println("Process ID | Arrival Time | Priority | Burst Units | Response Time | Response Ratio (RR) | Penalty (1/RR) | Start Time | Completion Time | Time Waiting | Turn Around Time");
+//			System.out.println("Process ID | Arrival Time | Priority | Burst Units | Response Time | Response Ratio (RR) | Penalty (1/RR) | Start Time | Completion Time | Time Waiting | Turn Around Time");
 			List<Entry<Integer, ProcessControlBlock>> entries = processControlTable.getListEntrySet();
 			Iterator<Entry<Integer, ProcessControlBlock>> iterator = entries.iterator();
 			int totalReponseTime = 0;

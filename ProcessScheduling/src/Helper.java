@@ -1,6 +1,7 @@
+import java.util.Random;
 
 public class Helper {
-	public static final int RANDOM_SEED = 10;
+	public static final int RANDOM_SEED = new Random().nextInt();
 	public static final int JOB_QUEUE_CAPACITY = 10;	
 	public static final int MAX_BURST_TIME = 5;	
 	public static final int MAX_PRIORITY = 10;

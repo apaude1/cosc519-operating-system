@@ -1,9 +1,9 @@
-import java.util.PriorityQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public class FirstComeFirstServeScheduling extends Scheduling {	
 	
 	public FirstComeFirstServeScheduling(Metrics metrics, int threadSequence, SchedulerTypeEnum schedulerTypeEnum) {		
-		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeComparator())), metrics, threadSequence, schedulerTypeEnum);
+		super(new ReadyQueue(new PriorityBlockingQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimeComparator())), metrics, threadSequence, schedulerTypeEnum);
 	}		
 	
 	@Override

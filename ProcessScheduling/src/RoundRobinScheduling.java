@@ -1,9 +1,9 @@
-import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class RoundRobinScheduling extends Scheduling {	
 		
 	public RoundRobinScheduling(Metrics metrics, int threadSequence, SchedulerTypeEnum schedulerTypeEnum) {
-		super(new ReadyQueue(new LinkedList<ProcessControlBlock>()), metrics, threadSequence, schedulerTypeEnum);
+		super(new ReadyQueue(new LinkedBlockingQueue<ProcessControlBlock>()), metrics, threadSequence, schedulerTypeEnum);
 	}		
 		
 	@Override

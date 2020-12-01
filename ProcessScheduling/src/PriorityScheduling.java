@@ -1,9 +1,9 @@
-import java.util.PriorityQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public class PriorityScheduling extends Scheduling {	
 	
 	public PriorityScheduling(Metrics metrics, int threadSequence, SchedulerTypeEnum schedulerTypeEnum) {
-		super(new ReadyQueue(new PriorityQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimePriorityComparator())), metrics, threadSequence, schedulerTypeEnum);		
+		super(new ReadyQueue(new PriorityBlockingQueue<ProcessControlBlock>(Helper.READY_QUEUE_CAPACITY, new ProcessArrivalTimePriorityComparator())), metrics, threadSequence, schedulerTypeEnum);		
 	}
 		
 	@Override
