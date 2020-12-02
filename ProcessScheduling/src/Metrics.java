@@ -22,37 +22,40 @@ public class Metrics {
 			}
 			
 			System.out.println("******************************" + schedulerTypeEnum.toString() + "******************************");
-//			System.out.println("Process ID | Arrival Time | Priority | Burst Units | Response Time | Response Ratio (RR) | Penalty (1/RR) | Start Time | Completion Time | Time Waiting | Turn Around Time");
+			System.out.println("Process ID | Arrival Time | Priority | Burst Units | Response Time | Response Ratio (RR) | Penalty (1/RR) | Start Time | Completion Time | Time Waiting | Turn Around Time");
 			List<Entry<Integer, ProcessControlBlock>> entries = processControlTable.getListEntrySet();
 			Iterator<Entry<Integer, ProcessControlBlock>> iterator = entries.iterator();
 			int totalReponseTime = 0;
 			int totalWaitTime = 0;
 			int totalTurnAroundTime = 0;
+			int totalBurstTime = 0;
 			float totalResponseRatioTime = 0;
 			float totalPenaltyRate = 0;
 			while(iterator.hasNext()) {
 				ProcessControlBlock processControlBlock = iterator.next().getValue();		
 				totalReponseTime += processControlBlock.getResponseTime(); 
 				totalWaitTime += processControlBlock.getWaitTime(); 
-				totalTurnAroundTime += processControlBlock.getTurnAroundTime(); 
+				totalTurnAroundTime += processControlBlock.getTurnAroundTime();
+				totalBurstTime += processControlBlock.getBurstTime(); 
 				totalResponseRatioTime += processControlBlock.getResponseRatioTime(); 
 				totalPenaltyRate += (float)1.0 / processControlBlock.getResponseRatioTime(); 
 			
-//		        System.out.println("   P" + processControlBlock.getPID() 
-//		        	+ "\t\t  " + processControlBlock.getArrivalTime()
-//		        	+ "\t\t" + processControlBlock.getPriority()
-//		        	+ "\t\t" + processControlBlock.getBurstTime()
-//	        	    + "\t\t" + processControlBlock.getResponseTime() 
-//	        	    + "\t\t" + (float)Math.round(processControlBlock.getResponseRatioTime() * 100.0) / 100.0
-//	        	    + "\t\t" + (float)Math.round(((float)1.0 / processControlBlock.getResponseRatioTime()) * 100.0) / 100.0
-//	        	    + "\t\t" + processControlBlock.getStartTime() 
-//		        	+ "\t\t" + processControlBlock.getCompletionTime() 
-//		        	+ "\t\t" + processControlBlock.getWaitTime() 
-//		            + "\t\t" + processControlBlock.getTurnAroundTime()); 
+		        System.out.println("   P" + processControlBlock.getPID() 
+		        	+ "\t\t  " + processControlBlock.getArrivalTime()
+		        	+ "\t\t" + processControlBlock.getPriority()
+		        	+ "\t\t" + processControlBlock.getBurstTime()
+	        	    + "\t\t" + processControlBlock.getResponseTime() 
+	        	    + "\t\t" + (float)Math.round(processControlBlock.getResponseRatioTime() * 100.0) / 100.0
+	        	    + "\t\t" + (float)Math.round(((float)1.0 / processControlBlock.getResponseRatioTime()) * 100.0) / 100.0
+	        	    + "\t\t" + processControlBlock.getStartTime() 
+		        	+ "\t\t" + processControlBlock.getCompletionTime() 
+		        	+ "\t\t" + processControlBlock.getWaitTime() 
+		            + "\t\t" + processControlBlock.getTurnAroundTime()); 
 			}
 			System.out.println("Current Time: " + currentTime);	
-			System.out.println("Average response time for       " + entries.size() + " processes: " + (float)Math.round(((float)totalReponseTime / (float)entries.size()) * 100.0) / 100.0); 
-		    System.out.println("Average waiting time for        " + entries.size() + " processes: " + (float)Math.round(((float)totalWaitTime / (float)entries.size()) * 100.0) / 100.0); 
+			System.out.println("Average response time for       " + entries.size() + " processes: " + (float)Math.round(((float)totalReponseTime / (float)entries.size()) * 100.0) / 100.0);
+			System.out.println("Average burst units             " + entries.size() + " processes: " + (float)Math.round(((float)totalBurstTime / (float)entries.size()) * 100.0) / 100.0);
+		    System.out.println("Average waiting time for        " + entries.size() + " processes: " + (float)Math.round(((float)totalWaitTime / (float)entries.size()) * 100.0) / 100.0);
 		    System.out.println("Average turn around time for    " + entries.size() + " processes: " + (float)Math.round(((float)totalTurnAroundTime / (float)entries.size()) * 100.0) / 100.0); 
 		    System.out.println("Average response ratio time for " + entries.size() + " processes: " + (float)Math.round((((float)totalResponseRatioTime / (float)entries.size())) * 100) / 100.0);
 		    System.out.println("Average penalty rate for        " + entries.size() + " processes: " + (float)Math.round((((float)totalPenaltyRate / (float)entries.size())) * 100) / 100.0);
