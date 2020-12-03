@@ -38,7 +38,7 @@ public class Metrics {
 				totalTurnAroundTime += processControlBlock.getTurnAroundTime();
 				totalBurstTime += processControlBlock.getBurstTime(); 
 				totalResponseRatioTime += processControlBlock.getResponseRatioTime(); 
-				totalPenaltyRate += (float)1.0 / processControlBlock.getResponseRatioTime(); 
+				totalPenaltyRate += (float)processControlBlock.getTurnAroundTime() / (float)processControlBlock.getBurstTime(); 
 			
 		        System.out.println("   P" + processControlBlock.getPID() 
 		        	+ "\t\t  " + processControlBlock.getArrivalTime()
@@ -58,7 +58,7 @@ public class Metrics {
 		    System.out.println("Average waiting time for        " + entries.size() + " processes: " + (float)Math.round(((float)totalWaitTime / (float)entries.size()) * 100.0) / 100.0);
 		    System.out.println("Average turn around time for    " + entries.size() + " processes: " + (float)Math.round(((float)totalTurnAroundTime / (float)entries.size()) * 100.0) / 100.0); 
 		    System.out.println("Average response ratio time for " + entries.size() + " processes: " + (float)Math.round((((float)totalResponseRatioTime / (float)entries.size())) * 100) / 100.0);
-		    System.out.println("Average penalty rate for        " + entries.size() + " processes: " + (float)Math.round((((float)totalPenaltyRate / (float)entries.size())) * 100) / 100.0);
+		    System.out.println("Average penalty rate for        " + entries.size() + " processes: " + (float)Math.round((((float)totalTurnAroundTime / (float)totalBurstTime)) * 100) / 100.0);
 		    System.out.println("# of context switches with      " + entries.size() + " processes: " + contextSwitchCount);
 
 			number++;
