@@ -61,12 +61,12 @@ public abstract class Scheduling implements Runnable {
 			
 			//this would generate new processes and populate job queue
 			processGenerator.randomizeProcessArrivalInJobQueue(jobQueue);
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 		
